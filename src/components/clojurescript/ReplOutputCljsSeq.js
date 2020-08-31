@@ -7,7 +7,7 @@ export default class ReplOutputCljsSeq extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      collapse: true
+      collapse: props.collapse == null ? true : props.collapse
     }
     const type = this.props.token.type;
     const parts = type.split(/[\s.]/);

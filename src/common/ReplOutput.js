@@ -4,65 +4,69 @@ import ReplCommon from './ReplCommon';
 import util from 'util';
 import ReplEntryOutputError from '../components/ReplEntryOutputError';
 import {EOL} from 'os';
-import React from 'react';
-import ReplDOM from '../common/ReplDOM';
-import ReplConsoleHook from '../common/ReplConsoleHook';
-import ReplOutputFunction from '../components/ReplOutputFunction';
-import ReplOutputArray from '../components/ReplOutputArray';
-import ReplOutputObject from '../components/ReplOutputObject';
-import ReplOutputInteger from '../components/ReplOutputInteger';
-import ReplOutputPromise from '../components/ReplOutputPromise';
-import ReplOutputRegex from '../components/ReplOutputRegex';
-import ReplOutputString from '../components/ReplOutputString';
-import ReplOutputColor from '../components/ReplOutputColor';
-import ReplOutputURL from '../components/ReplOutputURL';
-import ReplOutputCrypto from '../components/ReplOutputCrypto';
-import ReplOutputHTML from '../components/ReplOutputHTML';
-import ReplOutputBuffer from '../components/ReplOutputBuffer';
-import ReplOutputDate from '../components/ReplOutputDate';
-import ReplSourceFile from '../components/ReplSourceFile';
-import ReplOutputTranspile from '../components/ReplOutputTranspile';
-import ReplContext from './ReplContext';
+import React from 'react'
+import ReplDOM from '../common/ReplDOM'
+import ReplConsoleHook from '../common/ReplConsoleHook'
+import ReplOutputFunction from '../components/ReplOutputFunction'
+import ReplOutputArray from '../components/ReplOutputArray'
+import ReplOutputObject from '../components/ReplOutputObject'
+import ReplOutputInteger from '../components/ReplOutputInteger'
+import ReplOutputPromise from '../components/ReplOutputPromise'
+import ReplOutputRegex from '../components/ReplOutputRegex'
+import ReplOutputString from '../components/ReplOutputString'
+import ReplOutputColor from '../components/ReplOutputColor'
+import ReplOutputURL from '../components/ReplOutputURL'
+import ReplOutputCrypto from '../components/ReplOutputCrypto'
+import ReplOutputHTML from '../components/ReplOutputHTML'
+import ReplOutputBuffer from '../components/ReplOutputBuffer'
+import ReplOutputDate from '../components/ReplOutputDate'
+import ReplSourceFile from '../components/ReplSourceFile'
+import ReplOutputTranspile from '../components/ReplOutputTranspile'
+import ReplContext from './ReplContext'
 
-import ReplOutputCljsVar from '../components/clojurescript/ReplOutputCljsVar';
-import ReplOutputCljsSeq from '../components/clojurescript/ReplOutputCljsSeq';
-import ReplOutputCljsVal from '../components/clojurescript/ReplOutputCljsVal';
-import ReplOutputCljsDoc from '../components/clojurescript/ReplOutputCljsDoc';
-import ReplOutputCljsDocs from '../components/clojurescript/ReplOutputCljsDocs';
-import ReplOutputCljsSource from '../components/clojurescript/ReplOutputCljsSource';
-import ReplOutputCljsWrapper from '../components/clojurescript/ReplOutputCljsWrapper';
+import ReplOutputCljsVar from '../components/clojurescript/ReplOutputCljsVar'
+import ReplOutputCljsSeq from '../components/clojurescript/ReplOutputCljsSeq'
+import ReplOutputCljsVal from '../components/clojurescript/ReplOutputCljsVal'
+import ReplOutputCljsDoc from '../components/clojurescript/ReplOutputCljsDoc'
+import ReplOutputCljsDocs from '../components/clojurescript/ReplOutputCljsDocs'
+import ReplOutputCljsSource
+  from '../components/clojurescript/ReplOutputCljsSource'
+import ReplOutputCljsWrapper
+  from '../components/clojurescript/ReplOutputCljsWrapper'
 
-let Debug = require('vm').runInDebugContext('Debug');
-let makeMirror = (o) => Debug.MakeMirror(o, true);
-let BabelCoreJS = require("babel-runtime/core-js");
+//let Debug = require('vm').runInDebugContext('Debug');
+//let makeMirror = (o) => Debug.MakeMirror(o, true);
+let BabelCoreJS = require('babel-runtime/core-js')
 
 let getObjectLabels = (o) => {
-  if(o._isReactElement) {
-    return ` ReactElement {}`;
+  if (o._isReactElement) {
+    return ` ReactElement {}`
   }
-
-  if(o instanceof Error) {
-    return ` ${o.name} {}`;
+  
+  if (o instanceof Error) {
+    return ` ${o.name} {}`
   }
-
-  if(Buffer.isBuffer(o)) {
-    return ` Buffer (${o.length} bytes) {}`;
+  
+  if (Buffer.isBuffer(o)) {
+    return ` Buffer (${o.length} bytes) {}`
   }
-
-  return null;
+  
+  return null
 }
 
 let ReplOutputType = {
-  promise: (status, value, p) => {
-    return <ReplOutputPromise initStatus={status} initValue={value} promise={p}/>;
+  promise: (status = 'pending', value, p) => {
+    return <ReplOutputPromise initStatus={status} initValue={value}
+                              promise={p}/>
   },
   buffer: (buf) => {
-    return <ReplOutputBuffer buffer={buf} image={ReplCommon.getImageData(buf)}/>;
+    return <ReplOutputBuffer buffer={buf}
+                             image={ReplCommon.getImageData(buf)}/>
   },
   primitive: (n, type) => {
-    let prefix = `${type} {`;
-    let suffix = '}';
-    let className = type === 'Number' ? 'cm-number' : 'cm-literal';
+    let prefix = `${type} {`
+    let suffix = '}'
+    let className = type === 'Number' ? 'cm-number' : 'cm-literal'
     return (
       <span className='primitive-object'>
         {prefix}
@@ -120,17 +124,24 @@ let ReplOutputType = {
   date: (d) => {
     return <ReplOutputDate date={d} />
   },
-  object: (o) => {
-
-    if(_.isError(o)) {
-      let errorLine, errorFile, errorPosition, first, rest, syntaxError;
+  object: (o, collapse = true) => {
+    
+    if (_.isError(o)) {
+      let errorLine, errorFile, errorPosition, first, rest, syntaxError
       if (o instanceof SyntaxError && !o.stack.match(/^SyntaxError:/)) {
-        [errorFile, errorLine, errorPosition, first, ...rest] = o.stack.split(EOL);
-        syntaxError = {error:errorLine, caret: errorPosition, file: errorFile};
+        [
+          errorFile, errorLine, errorPosition, first,
+          ...rest] = o.stack.split(EOL)
+        syntaxError = {
+          error: errorLine,
+          caret: errorPosition,
+          file: errorFile
+        }
       } else {
-        [first, ...rest] = o.stack.split(EOL);
+        [first, ...rest] = o.stack.split(EOL)
       }
-      return (<ReplEntryOutputError message={first} trace={rest} syntaxError={syntaxError}>
+      return (<ReplEntryOutputError message={first} trace={rest}
+                                    syntaxError={syntaxError}>
       </ReplEntryOutputError>);
     }
 
@@ -168,13 +179,11 @@ let ReplOutputType = {
     }
 
     if(o instanceof Promise || o.then) {
-      let m = makeMirror(o);
-      if(m.isPromise()) {
-        return ReplOutputType['promise'](m.status(), m.promiseValue().value(), o);
-      }
+      return ReplOutputType['promise'](null, null, o)
     }
-
-    return <ReplOutputObject object={o} label={getObjectLabels(o)} primitive={_.isString(o)}/>
+    
+    return <ReplOutputObject object={o} label={getObjectLabels(o)}
+                             primitive={_.isString(o)} collapse={collapse}/>
   },
   'undefined': (u) => {
     return <span className='cm-atom'>undefined</span>;
@@ -504,14 +513,14 @@ let ReplOutput = {
         [[Get Error]] {ReplOutputType[typeof e](e)}
       </span>);
   },
-  transformObject: (object) => {
+  transformObject: (object, collapse = false) => {
     try {
-      if(object instanceof ClojureWrapper) {
-        return object.view();
+      if (object instanceof ClojureWrapper) {
+        return object.view()
       }
-      return ReplOutputType[typeof object](object);
-    } catch(e) {
-      return ReplOutput.accessError(e);
+      return ReplOutputType[typeof object](object, collapse)
+    } catch (e) {
+      return ReplOutput.accessError(e)
     }
   },
   readProperty: (obj, prop) => {

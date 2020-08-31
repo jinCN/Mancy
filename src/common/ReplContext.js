@@ -4,7 +4,6 @@ import ReplConstants from '../constants/ReplConstants';
 import vm from 'vm';
 import fs from 'fs';
 import {dirname, resolve} from 'path';
-import timers from 'timers';
 import module from 'module';
 import util from 'util';
 const remote = require('electron').remote;
@@ -54,6 +53,7 @@ let createContext = () => {
   let timerFuns = [ 'clearImmediate', 'clearInterval', 'clearTimeout',
     'setImmediate', 'setInterval', 'setTimeout' ];
 
+  let timers = require('timers')
   _.each(timerFuns, (fun) => {
     context[fun] = timers[fun];
   });
@@ -81,14 +81,24 @@ let createContext = () => {
     try {
       return _load(request, parent, isMain);
     } catch(e) {
-      let path = dirname(parent.paths[parent.paths.length - 1]);
+      if (e.code === 'MODULE_NOT_FOUND' && e.requireStack &&
+        e.requireStack.length === 1) {
+      } else {
+        throw e
+      }
+      let path = dirname(parent.paths[parent.paths.length - 1])
       try {
         let child = execSync(`npm install ${request}`,
-          { cwd: `${path}`, stdio:[], timeout: global.Mancy.preferences.timeout });
-        return _load(request, parent, isMain);
-      } catch(ex) {
-        e.message = `${e.message} + (${ex.message.split('\n')[0]})`;
-        throw e;
+          {
+            cwd: `${path}`,
+            stdio: [],
+            timeout: global.Mancy.preferences.timeout
+          }
+        )
+        return _load(request, parent, isMain)
+      } catch (ex) {
+        e.message = `${e.message} + (${ex.message.split('\n')[0]})`
+        throw e
       }
     }
   };

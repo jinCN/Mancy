@@ -1,6 +1,6 @@
 import gulp from 'gulp';
 import plugins from 'gulp-load-plugins';
-import runSequence from 'run-sequence';
+import runSequence from 'gulp4-run-sequence';
 import path from 'path';
 import _ from 'lodash';
 import {argv} from 'yargs';
@@ -15,7 +15,11 @@ import env from 'gulp-env';
 let execSync = require('child_process').execSync;
 import BabelPolyfill from "babel-polyfill";
 
-const $ = plugins();
+const $ = plugins({
+  rename: {
+    'gulp-dart-sass': 'sass'
+  }
+});
 const electronVersion = require(resolve('node_modules', 'electron', 'package.json')).version;
 
 const nodeResources = (() => {
@@ -222,15 +226,18 @@ gulp.task('sass', () =>
     .pipe($.livereload())
 );
 
+
 gulp.task('react', () =>
   gulp.src(options.react.source)
+//    .pipe($.sourcemaps.init())
     .pipe($.babel(options.react.config).on('error', onError))
     .pipe($.react().on('error', onError))
+//    .pipe($.sourcemaps.write('.'))
     .pipe(gulp.dest(options.react.target))
 );
 
 gulp.task('clean', () => {
-  return require('del').sync([PATHS.APP, PATHS.DIST]);
+  return require('del')([PATHS.APP, PATHS.DIST]);
 });
 
 gulp.task('watchableCopy', () => {
@@ -240,20 +247,12 @@ gulp.task('watchableCopy', () => {
     .pipe(gulp.dest(PATHS.APP));
 });
 
-gulp.task('copy', ['watchableCopy'], () => {
+gulp.task('copy', gulp.series('watchableCopy', () => {
   return gulp.src(resources, { base: '.' })
     .pipe(gulp.dest(PATHS.APP));
-});
+}));
 
-gulp.task('watch',['rebuild'], (cb) => {
-  $.livereload.listen();
-  gulp.watch(options.sass.source, ['sass']);
-  gulp.watch(options.react.source, ['react']);
-  gulp.watch('package.json', ['watchableCopy']);
-  gulp.watch('README.md', ['watchableCopy']);
-  gulp.watch('index.html', ['watchableCopy']);
-  cb();
-});
+
 
 gulp.task('build', (cb) => {
   return runSequence('clean', 'copy', ['sass', 'react'], cb);
@@ -263,7 +262,17 @@ gulp.task('rebuild', (cb) => {
   return runSequence('watchableCopy', 'sass', 'react', cb);
 });
 
-gulp.task('package', ['build'], (cb) => {
+gulp.task('watch', gulp.series('rebuild', (cb) => {
+  $.livereload.listen();
+  gulp.watch(options.sass.source, ['sass']);
+  gulp.watch(options.react.source, ['react']);
+  gulp.watch('package.json', ['watchableCopy']);
+  gulp.watch('README.md', ['watchableCopy']);
+  gulp.watch('index.html', ['watchableCopy']);
+  cb();
+}));
+
+gulp.task('package', gulp.series('build', (cb) => {
   (async function() {
     try {
       let {platform, arch} = process;
@@ -274,9 +283,9 @@ gulp.task('package', ['build'], (cb) => {
       cb(err);
     }
   })();
-});
+}));
 
-gulp.task('packageAll', ['build'], (cb) => {
+gulp.task('packageAll', gulp.series('build', (cb) => {
   (async function() {
     try {
       await executable('darwin', 'all', electronVersion);
@@ -288,7 +297,7 @@ gulp.task('packageAll', ['build'], (cb) => {
       cb(err);
     }
   })();
-});
+}));
 
 gulp.task('run', (cb) => {
   (async function() {
@@ -306,11 +315,11 @@ gulp.task('run', (cb) => {
   })();
 });
 
-gulp.task('start',[], (cb) => runSequence('rebuild', 'run', cb));
+gulp.task('start', (cb) => runSequence('rebuild', 'run', cb));
 
-gulp.task('debug', ['rebuild'], (cb) => runSequence('run', cb));
+gulp.task('debug', gulp.series('rebuild', (cb) => runSequence('run', cb)));
 
-gulp.task('release',['build'], (cb) => {
+gulp.task('release', gulp.series('build', (cb) => {
   (async function() {
     try {
       let github = new GitHubApi({
@@ -336,6 +345,6 @@ gulp.task('release',['build'], (cb) => {
       cb(err);
     }
   })();
-});
+}));
 
-gulp.task('default', ['debug']);
+gulp.task('default', gulp.series('debug'));

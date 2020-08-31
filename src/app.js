@@ -6,18 +6,18 @@ import ReplConstants from './constants/ReplConstants';
 import ReplFonts from './common/ReplFonts';
 import _ from 'lodash';
 import {ipcRenderer, remote, webFrame} from 'electron';
-
-(() => {
-  // Temporary fix for node bug : https://github.com/nodejs/node/issues/3158
-  let ownPropertyNames = Object.getOwnPropertyNames.bind(Object);
-
-  Object.getOwnPropertyNames = (o) => {
-    let result = ownPropertyNames(o);
-    let keys = Object.keys(o);
-    let difference = _.difference(keys, result);
-    return difference.length ? result.concat(difference) : result;
-  };
-})();
+//
+//(() => {
+//  // Temporary fix for node bug : https://github.com/nodejs/node/issues/3158
+//  let ownPropertyNames = Object.getOwnPropertyNames.bind(Object);
+//
+//  Object.getOwnPropertyNames = (o) => {
+//    let result = ownPropertyNames(o);
+//    let keys = Object.keys(o);
+//    let difference = _.difference(keys, result);
+//    return difference.length ? result.concat(difference) : result;
+//  };
+//})();
 
 const addNewPreferences = (defaults, preferences) => {
   _.each(_.keys(defaults), (key) => {

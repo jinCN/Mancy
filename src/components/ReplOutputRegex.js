@@ -9,7 +9,7 @@ export default class ReplOutputRegex extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      collapse: true,
+      collapse: props.collapse == null ? true : props.collapse,
       input: ''
     }
 

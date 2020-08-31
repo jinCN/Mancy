@@ -32,7 +32,7 @@ const systemFonts = (() => {
       { family: 'FiraCode' },
       { family: 'Josefin Sans' }
     ];
-    return _.chain(settings['disable-font-manager'] ? locals : require('font-manager').getAvailableFontsSync())
+    return _.chain( locals )
       .tap((fonts) => {
         locals.forEach(f => fonts.push(f));
       })

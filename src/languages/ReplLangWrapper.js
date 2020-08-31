@@ -22,7 +22,7 @@ const REPL = (repl) => {
     input: readable,
     output: writable,
     terminal: false,
-    useGlobal: false,
+    useGlobal: true,
     ignoreUndefined: false,
     useColors: false,
     writer: (obj, opt) => {
@@ -32,9 +32,29 @@ const REPL = (repl) => {
       return '<<response>>';
     },
     historySize: ReplConstants.REPL_HISTORY_SIZE,
-    replMode: repl['REPL_MODE_MAGIC'],
+    replMode: repl['REPL_MODE_SLOPPY']
   });
-
+  
+  // work-a-round for electron issue [#18872](https://github.com/electron/electron/issues/18872)
+  // we dont use the completer: ... function option because we dont want to reimplement the whole thing
+  let myGlobals = [
+    'global', 'window', 'console', 'electron', 'mainProcess', 'mainWindow',
+    'consoleWin', 'consoleMain'];
+  let builtinCompleter = nodeRepl.completer;
+  
+  nodeRepl.completer = (line, callback) => {
+    callback(null, [[],line])
+//    if (/^[^ .]*$/.test(line))
+//      callback(null, [
+//        myGlobals.filter((word) => {
+//          return word.indexOf(line) === 0
+//        }), line]);
+//    else {
+////      callback(null,[])
+//      builtinCompleter(line, callback)
+//    }
+  };
+  
   // remove default repl commands
   ['clear', 'help', 'save', 'exit'].forEach(cmd => delete nodeRepl.commands[cmd]);
 

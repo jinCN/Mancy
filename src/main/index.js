@@ -390,7 +390,7 @@ ipcMain.on('application:download', function(event, buffer) {
 });
 
 ipcMain.on('application:dock-message-notification', function(event, id) {
-  dockNotificationCache[id] = dockNotificationCache[id] + 1;
+  dockNotificationCache[id] = (dockNotificationCache[id] || 0) + 1
   if (process.platform === 'darwin' ||
       (process.platform === 'linux' && app.isUnityRunning &&
         app.isUnityRunning())) {
@@ -415,8 +415,9 @@ function onReady(fun) {
       experimentalFeatures: true,
       experimentalCanvasFeatures: true,
       webgl: true,
-      scrollBounce: true
-		},
+      scrollBounce: true,
+      nodeIntegration: true
+    },
     show: false,
     backgroundColor: '#F5F5F5'
   }
@@ -424,6 +425,7 @@ function onReady(fun) {
     options.icon = path.resolve(__dirname, '..', 'icons', 'mancy.png');
   }
   let mainWindow = new BrowserWindow(options);
+//  mainWindow.webContents.openDevTools()
   let id = mainWindow.id;
   windowCache[id] = mainWindow;
   let menuManager = menuManagerCache[id] = new MenuManager(argv);

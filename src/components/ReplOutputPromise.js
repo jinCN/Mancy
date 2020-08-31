@@ -14,7 +14,7 @@ export default class ReplOutputPromise extends React.Component {
       status: this.props.initStatus,
       value: this.props.initValue,
       reason: null,
-      collapse: true
+      collapse: props.collapse == null ? true : props.collapse
     };
 
     this.resolve = this.resolve.bind(this);

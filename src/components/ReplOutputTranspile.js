@@ -8,7 +8,7 @@ export default class ReplOutputTranspile extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      collapse: true,
+      collapse: props.collapse == null ? true : props.collapse,
     };
     this.onToggleCollapse = this.onToggleCollapse.bind(this);
 

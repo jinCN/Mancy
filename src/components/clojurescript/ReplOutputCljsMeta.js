@@ -7,7 +7,7 @@ export default class ReplOutputCljsMeta extends React.Component {
     super(props);
     this.state = {
       iCollapse: true,
-      collapse: true
+      collapse: props.collapse == null ? true : props.collapse
     };
 
     this.onToggleCollapse = this.onToggleCollapse.bind(this);
