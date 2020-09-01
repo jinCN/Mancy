@@ -34,7 +34,6 @@ let createContext = () => {
     '__filename',
     '__dirname'
   ];
-
   let circulars = ['global', 'GLOBAL', 'root'];
 
   _.each(defaults, (g) => {
@@ -88,7 +87,7 @@ let createContext = () => {
       }
       let path = dirname(parent.paths[parent.paths.length - 1])
       try {
-        let child = execSync(`npm install ${request}`,
+        let child = execSync(`test -f package.json || echo '{"name":"project","version":"1.0.0"}' > package.json;npm install ${request}`,
           {
             cwd: `${path}`,
             stdio: [],
@@ -182,7 +181,7 @@ let createContext = () => {
       throw e;
     }
   };
-
+  
   const _findPath = module._findPath;
   const relativeRegex = /^\./;
   const isRelativePath = p => relativeRegex.test(p);

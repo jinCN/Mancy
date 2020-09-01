@@ -9,7 +9,7 @@ export default class ReplSourceFile extends React.Component {
     this.openExternalFile = this.openExternalFile.bind(this);
   }
   openExternalFile() {
-    shell.openItem(this.props.location);
+    shell.openPath(this.props.location);
   }
   render() {
     let isNativeModule = false;

@@ -91,7 +91,7 @@ function onCloseWindow(e, title, detail) {
   let ret = promptOnClose;
   if(promptOnClose) {
     try {
-      ret = !!dialog.showMessageBox(window, {
+      ret = !!dialog.showMessageBoxSync(window, {
         title: title || 'Close Window',
         buttons: ['Close', 'Cancel'],
         type: 'question',

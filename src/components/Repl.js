@@ -442,24 +442,37 @@ export default class Repl extends React.Component {
   }
 
   onConsole({type, data}) {
-    if(data.length === 0) { return; }
-    let results;
-    if(data.length > 1 && typeof data[0] === 'string' && data[0].match(/%[%sdj]/)) {
-      results = [format.apply(null, data)];
+    if (data.length === 0) {
+      return
     }
-    else {
-      results = _.reduce(data, function(result, datum) {
-        let {formattedOutput} = ReplOutput.some(datum).highlight(datum);
-        result.push(formattedOutput);
-        return result;
-      }, []);
+    let deprecatedCodes = [
+      'DEP0124', 'DEP0074', 'DEP0075', 'DEP0078', 'DEP0082']
+  
+    if (type === 'error' && data[0]) {
+      for (let code of deprecatedCodes) {
+        if (data[0].includes(`[${code}] DeprecationWarning:`)) {
+          return
+        }
+      }
     }
-
+    
+    let results
+    if (data.length > 1 && typeof data[0] === 'string' &&
+      data[0].match(/%[%sdj]/)) {
+      results = [format.apply(null, data)]
+    } else {
+      results = _.reduce(data, function (result, datum) {
+        let { formattedOutput } = ReplOutput.some(datum).highlight(datum)
+        result.push(formattedOutput)
+        return result
+      }, [])
+    }
+  
     ReplConsoleActions.addEntry({
       type: type,
       data: results
-    });
-    this.onConsoleChange(type);
+    })
+    this.onConsoleChange(type)
   }
 
   onConsoleChange(type) {

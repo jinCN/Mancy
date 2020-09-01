@@ -56,10 +56,10 @@ const addNewPreferences = (defaults, preferences) => {
     "keyMap": "default",
     "npmPaths": [],
     "historySize": ReplConstants.REPL_HISTORY_SIZE,
-    "historyAggressive": false,
-    "executionTime": false,
+    "historyAggressive": true,
+    "executionTime": true,
     "indentUnit": 2,
-    "tabSize": 4,
+    "tabSize": 2,
     "typescript": {
       "noImplicitAny": false,
       "ignoreSemanticError" : true,

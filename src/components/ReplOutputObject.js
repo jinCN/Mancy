@@ -10,7 +10,6 @@ import ReplActions from '../actions/ReplActions';
 export default class ReplOutputObject extends React.Component {
   constructor(props) {
     super(props)
-    console.log(`props.collapse:`, props.collapse)
     this.state = {
       collapse: props.collapse == null ? true : props.collapse
     }
@@ -55,7 +54,6 @@ export default class ReplOutputObject extends React.Component {
   render() {
     let label = ReplCommon.highlight(this.props.label || this.getType(this.props.object));
     let renderHTMLEngine = this.renderHTMLEngine();
-    console.log(`this.state.collapse:`, this.state.collapse)
     return (
       <span className='repl-entry-message-output-object-folds'>
         {

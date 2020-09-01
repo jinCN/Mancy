@@ -55,9 +55,9 @@ let getObjectLabels = (o) => {
 }
 
 let ReplOutputType = {
-  promise: (status = 'pending', value, p) => {
+  promise: (status = 'pending', value, p, collapse = true) => {
     return <ReplOutputPromise initStatus={status} initValue={value}
-                              promise={p}/>
+                              promise={p} collapse={collapse}/>
   },
   buffer: (buf) => {
     return <ReplOutputBuffer buffer={buf}
@@ -85,7 +85,7 @@ let ReplOutputType = {
   boolean: (b) => {
     return <span className='cm-atom'>{b.toString()}</span>;
   },
-  array: (a, meta = { type: 'Array', proto: Array.prototype }) => {
+  array: (a, collapse = true,meta = { type: 'Array', proto: Array.prototype }) => {
     let tokenize = (arr, result, range, mul=1) => {
       let len = result.length;
       if(arr.length < range) {
@@ -93,11 +93,11 @@ let ReplOutputType = {
           ? ['[',len * range * mul, ' … ', (len * range * mul) - 1 + arr.length % range,']'].join('')
           : [meta.type, '[',arr.length,']'].join('');
         result.push(<ReplOutputArray proto={meta.proto}
-          array={arr} label={label} start={len * range * mul} noIndex={false}/>);
+          array={arr} label={label} start={len * range * mul} noIndex={false} collapse={collapse}/>);
       } else {
         let label = ['[', len * range * mul, ' … ', (len + 1) * range * mul - 1, ']'].join('');
         result.push(<ReplOutputArray proto={meta.proto}
-          array={arr.splice(0, range)} label={label} start={len * range * mul} noIndex={false}/>);
+          array={arr.splice(0, range)} label={label} start={len * range * mul} noIndex={false} collapse={collapse}/>);
         tokenize(arr, result, range, mul);
       }
     };
@@ -116,13 +116,13 @@ let ReplOutputType = {
       return <ReplOutputArray array={arrays}
         label={[meta.type,'[',a.length,']'].join('')}
         proto={meta.proto}
-        start={0} noIndex={true} length={a.length}/>
+        start={0} noIndex={true} length={a.length} collapse={collapse}/>
     } else {
       return arrays;
     }
   },
   date: (d) => {
-    return <ReplOutputDate date={d} />
+    return <ReplOutputDate date={d}/>
   },
   object: (o, collapse = true) => {
     
@@ -146,7 +146,7 @@ let ReplOutputType = {
     }
 
     if(Array.isArray(o)){
-      return ReplOutputType.array(o);
+      return ReplOutputType.array(o,collapse);
     }
 
     if(Buffer.isBuffer(o) || ReplCommon.isUint8Array(o)) {
@@ -155,7 +155,7 @@ let ReplOutputType = {
 
     if(ReplCommon.isTypedArray(o)) {
       let arrayLike = ReplCommon.toArray(o);
-      return ReplOutputType.array(arrayLike, {type: ReplCommon.type(o), proto: o.__proto__});
+      return ReplOutputType.array(arrayLike, collapse,{type: ReplCommon.type(o), proto: o.__proto__});
     }
 
     if(_.isDate(o)) {
@@ -178,8 +178,8 @@ let ReplOutputType = {
       return ReplOutputType['primitive'](o, 'Boolean');
     }
 
-    if(o instanceof Promise || o.then) {
-      return ReplOutputType['promise'](null, null, o)
+    if(o instanceof Promise || typeof o.then==='function') {
+      return ReplOutputType['promise'](null, null, o,collapse)
     }
     
     return <ReplOutputObject object={o} label={getObjectLabels(o)}
