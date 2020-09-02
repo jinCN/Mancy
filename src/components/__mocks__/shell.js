@@ -1,2 +1,1 @@
-
-module.exports = { beep: jest.genMockFunction() };
+module.exports = { beep: jest.genMockFunction() }

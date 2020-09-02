@@ -16,7 +16,7 @@
     "release": "gulp release",
     "watch": "gulp watch",
     "build": "gulp build",
-    "rebuild": "gulp rebuild"
+    "rebuild": "gulp rebuild && echo $(date +\"%T\")"
   },
   "jest": {
     "scriptPreprocessor": "../node_modules/babel-jest",
@@ -65,6 +65,7 @@
     "semver": "^5.0.3"
   },
   "dependencies": {
+    "@superjs/lazy": "^1.0.0",
     "babel-core": "^6.7.0",
     "babel-plugin-add-module-exports": "^0.1.1",
     "babel-plugin-transform-runtime": "^6.3.13",
@@ -76,6 +77,7 @@
     "cljs-mancy": "^1.0.0",
     "codemirror": "^5.13.0",
     "coffee-script": "https://github.com/princejwesley/coffeescript.git",
+    "electron-store": "^6.0.0",
     "font-awesome": "^4.5.0",
     "github": "^0.2.4",
     "gulp-sourcemaps": "^2.6.5",

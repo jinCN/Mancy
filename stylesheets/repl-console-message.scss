@@ -98,36 +98,81 @@
           }
         }
 
-        .repl-entry-output-error {
-          .repl-entry-output-error-message {
-            .fa-play {
-              color: if($theme == $dark-theme, $dark-app-entry-message-output-arr-fold-color, $lt-app-entry-message-output-arr-fold-color);
-            }
-            .repl-entry-output-error-message-heading {
-              padding-left: 5px;
-            }
-            .syntax-error {
-              .repl-entry-output-error-message-heading {
-                padding-left: 0px;
-              }
-              .err-underline {
-                text-decoration: underline;
-                text-decoration-color: $app-text-error-color;
-                font-size: 0.9em;
-              }
-            }
-            .repl-entry-output-error-stack {
-              .repl-entry-output-error-stack-lines {
-                padding-left: calc(1em + 5px);
-              }
-            }
-          }
-
-          @include stackTraceHighlight($theme);
-        }
+        //.repl-entry-output-error {
+        //  .repl-entry-output-error-message {
+        //    .fa-play {
+        //      color: if($theme == $dark-theme, $dark-app-entry-message-output-arr-fold-color, $lt-app-entry-message-output-arr-fold-color);
+        //    }
+        //    .fa-hashtag {
+        //      padding-left: 5px;
+        //      font-size: 70%;
+        //      cursor: pointer;
+        //      color: if($theme == $dark-theme, $dark-app-entry-message-output-bind-color, $lt-app-entry-message-output-bind-color);
+        //    }
+        //    .repl-entry-output-error-message-heading {
+        //      padding-left: 5px;
+        //    }
+        //    .syntax-error {
+        //      .repl-entry-output-error-message-heading {
+        //        padding-left: 0px;
+        //      }
+        //      .err-underline {
+        //        text-decoration: underline;
+        //        text-decoration-color: $app-text-error-color;
+        //        font-size: 0.9em;
+        //      }
+        //    }
+        //    .repl-entry-output-error-stack {
+        //      .repl-entry-output-error-stack-lines {
+        //        padding-left: calc(1em + 5px);
+        //      }
+        //    }
+        //  }
+        //
+        //  @include stackTraceHighlight($theme);
+        //}
       }
     }
 
+    .repl-entry-output-error {
+      .repl-entry-output-error-message {
+        .fa-play {
+          font-size: 0.8em;
+          color: if($theme == $dark-theme, $dark-app-entry-message-output-arr-fold-color, $lt-app-entry-message-output-arr-fold-color);
+        }
+
+        .fa-hashtag {
+          padding-left: 5px;
+          font-size: 70%;
+          cursor: pointer;
+          color: if($theme == $dark-theme, $dark-app-entry-message-output-bind-color, $lt-app-entry-message-output-bind-color);
+        }
+
+        .repl-entry-output-error-message-heading {
+          padding-left: 5px;
+        }
+
+        .syntax-error {
+          .repl-entry-output-error-message-heading {
+            padding-left: 0px;
+          }
+
+          .err-underline {
+            text-decoration: underline;
+            text-decoration-color: $app-text-error-color;
+            font-size: 0.9em;
+          }
+        }
+
+        .repl-entry-output-error-stack {
+          .repl-entry-output-error-stack-lines {
+            padding-left: calc(1em + 5px);
+          }
+        }
+      }
+
+      @include stackTraceHighlight($theme);
+    }
     .repl-console-message-entry.error {
 
     }

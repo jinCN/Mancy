@@ -1,250 +1,284 @@
-import React from 'react';
-import _ from 'lodash';
-import ReplPreferencesStore from '../stores/ReplPreferencesStore';
-import ReplStatusBarActions from '../actions/ReplStatusBarActions';
-import ReplFontFamily from './ReplFontFamily';
-import ReplPageZoom from './ReplPageZoom';
-import {ipcRenderer} from 'electron';
+import React from 'react'
+import _ from 'lodash'
+import ReplPreferencesStore from '../stores/ReplPreferencesStore'
+import ReplStatusBarActions from '../actions/ReplStatusBarActions'
+import ReplFontFamily from './ReplFontFamily'
+import ReplPageZoom from './ReplPageZoom'
+import { ipcRenderer } from 'electron'
+
 
 let langs = {
   js: 'JavaScript',
   ls: 'LiveScript',
   ts: 'TypeScript',
   coffee: 'CoffeeScript',
-  cljs: 'ClojureScript',
-};
+  cljs: 'ClojureScript'
+}
 
 export default class ReplPreferences extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = _.clone(ReplPreferencesStore.getStore());
+  constructor (props) {
+    super(props)
+    this.state = _.clone(ReplPreferencesStore.getStore())
     _.each([
       'onToggleView', 'onClose', 'onThemeChange', 'onBabelChange',
-      'onModeChange', 'onChangeTimeout', 'onChangeSuggestionDelay', 'onToggleShiftEnter',
-      'onAsyncWrapChange', 'onToggleAutoCompleteOnEnter', 'onToggleAutomaticAutoComplete',
-      'onLangChange', 'onWatermarkChange', 'onToggleTranspile', 'selectLoadScript',
+      'onModeChange', 'onChangeTimeout', 'onChangeSuggestionDelay',
+      'onToggleShiftEnter',
+      'onAsyncWrapChange', 'onToggleAutoCompleteOnEnter',
+      'onToggleAutomaticAutoComplete',
+      'onLangChange', 'onWatermarkChange', 'onToggleTranspile',
+      'selectLoadScript',
       'resetLoadScript', 'onTogglePromptOnClose', 'onEditorChange',
-      'onCloseNPMPath', 'addNPMPath', 'resetNPMPath', 'onMoveNPMPathUp', 'onMoveNPMPathDown',
-      'onToggleLineNumberGutter', 'onToggleFoldGutter', 'onKeyMapChange', 'onChangeHistorySize',
-      'onToggleHistoryAggressive', 'showTypeScriptPreferences', 'onSetTypeScriptOptions',
-      'showClojureScriptPreferences', 'showLangPreferences', 'onSetClojureScriptOptions',
-      'onParinferModeChange', 'onParinferPreviewChange', 'onToggleExecutionTime',
+      'onCloseNPMPath', 'addNPMPath', 'resetNPMPath', 'onMoveNPMPathUp',
+      'onMoveNPMPathDown',
+      'onToggleLineNumberGutter', 'onToggleFoldGutter', 'onKeyMapChange',
+      'onChangeHistorySize',
+      'onToggleHistoryAggressive', 'showTypeScriptPreferences',
+      'onSetTypeScriptOptions',
+      'showClojureScriptPreferences', 'showLangPreferences',
+      'onSetClojureScriptOptions',
+      'onParinferModeChange', 'onParinferPreviewChange',
+      'onToggleExecutionTime',
       'onSetIndentUnit', 'onSetTabSize'
     ], (field) => {
-      this[field] = this[field].bind(this);
-    });
+      this[field] = this[field].bind(this)
+    })
   }
-
-  componentDidMount() {
-    this.unsubscribe = ReplPreferencesStore.listen(this.onToggleView);
+  
+  componentDidMount () {
+    this.unsubscribe = ReplPreferencesStore.listen(this.onToggleView)
   }
-
-  componentWillUnmount() {
-    this.unsubscribe();
+  
+  componentWillUnmount () {
+    this.unsubscribe()
   }
-
-  selectLoadScript() {
+  
+  selectLoadScript () {
     let extensions = _.chain(require.extensions)
       .keys()
       .map((ext) => ext.substring(1))
-      .value();
+      .value()
     let result = ipcRenderer.sendSync('application:open-sync-resource', {
       filters: [{ name: 'Scripts', extensions }],
       title: 'Select startup script',
       buttonLabel: 'Load',
       properties: ['openFile']
-    });
-    if(result.length) {
-      ReplPreferencesStore.onSelectLoadScript(result[0]);
+    })
+    if (result.length) {
+      ReplPreferencesStore.onSelectLoadScript(result[0])
     }
   }
-
-  resetLoadScript() {
-    ReplPreferencesStore.onSelectLoadScript(null);
+  
+  resetLoadScript () {
+    ReplPreferencesStore.onSelectLoadScript(null)
   }
-
-  onToggleView() {
-    this.setState(ReplPreferencesStore.getStore());
+  
+  onToggleView () {
+    this.setState(ReplPreferencesStore.getStore())
   }
-
-  onClose() {
-    ReplPreferencesStore.onClosePreferences();
+  
+  onClose () {
+    ReplPreferencesStore.onClosePreferences()
   }
-
-  onThemeChange(e) {
-    ReplPreferencesStore.onSetTheme(e.target.value);
+  
+  onThemeChange (e) {
+    ReplPreferencesStore.onSetTheme(e.target.value)
   }
-
-  onKeyMapChange(e) {
-    ReplPreferencesStore.onSetKeyMap(e.target.value);
+  
+  onKeyMapChange (e) {
+    ReplPreferencesStore.onSetKeyMap(e.target.value)
   }
-
-  onBabelChange(e) {
-    ReplPreferencesStore.toggleBabel(e.target.checked);
+  
+  onBabelChange (e) {
+    ReplPreferencesStore.toggleBabel(e.target.checked)
   }
-
-  onWatermarkChange(e) {
-    ReplPreferencesStore.toggleWatermark(e.target.checked);
+  
+  onWatermarkChange (e) {
+    ReplPreferencesStore.toggleWatermark(e.target.checked)
   }
-
-  onModeChange(e) {
-    ReplPreferencesStore.onSetREPLMode(e.target.value);
+  
+  onModeChange (e) {
+    ReplPreferencesStore.onSetREPLMode(e.target.value)
   }
-
-  onEditorChange(e) {
-    ReplPreferencesStore.onSetEditorMode(e.target.value);
+  
+  onEditorChange (e) {
+    ReplPreferencesStore.onSetEditorMode(e.target.value)
   }
-
-  onLangChange(e) {
-    ReplPreferencesStore.onSetLanguage(e.target.value);
+  
+  onLangChange (e) {
+    ReplPreferencesStore.onSetLanguage(e.target.value)
     this.setState({
       lang: e.target.value
-    });
+    })
   }
-
-  onChangeTimeout(e) {
-    ReplPreferencesStore.onSetExeTimeout(e.target.value);
+  
+  onChangeTimeout (e) {
+    ReplPreferencesStore.onSetExeTimeout(e.target.value)
   }
-
-  onToggleExecutionTime(e) {
-    ReplPreferencesStore.onToggleExecutionTime(e.target.checked);
+  
+  onToggleExecutionTime (e) {
+    ReplPreferencesStore.onToggleExecutionTime(e.target.checked)
   }
-
-  onChangeSuggestionDelay(e) {
-    ReplPreferencesStore.onSetSuggestionDelay(e.target.value);
+  
+  onChangeSuggestionDelay (e) {
+    ReplPreferencesStore.onSetSuggestionDelay(e.target.value)
   }
-
-  onToggleShiftEnter(e) {
-    ReplPreferencesStore.toggleShiftEnter(e.target.checked);
-    ReplStatusBarActions.updateRunCommand();
+  
+  onToggleShiftEnter (e) {
+    ReplPreferencesStore.toggleShiftEnter(e.target.checked)
+    ReplStatusBarActions.updateRunCommand()
   }
-
-  onToggleAutoCompleteOnEnter(e) {
-    ReplPreferencesStore.toggleAutoCompleteOnEnter(e.target.checked);
+  
+  onToggleAutoCompleteOnEnter (e) {
+    ReplPreferencesStore.toggleAutoCompleteOnEnter(e.target.checked)
   }
-
-  onAsyncWrapChange(e) {
-    ReplPreferencesStore.toggleAsyncWrap(e.target.checked);
+  
+  onAsyncWrapChange (e) {
+    ReplPreferencesStore.toggleAsyncWrap(e.target.checked)
   }
-
-  onToggleAutomaticAutoComplete(e) {
-    ReplPreferencesStore.toggleAutomaticAutoComplete(e.target.checked);
+  
+  onToggleAutomaticAutoComplete (e) {
+    ReplPreferencesStore.toggleAutomaticAutoComplete(e.target.checked)
   }
-
-  onToggleTranspile(e) {
-    ReplPreferencesStore.toggleTranspile(e.target.checked);
+  
+  onToggleTranspile (e) {
+    ReplPreferencesStore.toggleTranspile(e.target.checked)
   }
-
-  onTogglePromptOnClose(e) {
-    ReplPreferencesStore.togglePromptOnClose(e.target.checked);
+  
+  onTogglePromptOnClose (e) {
+    ReplPreferencesStore.togglePromptOnClose(e.target.checked)
   }
-
-  onToggleFoldGutter(e) {
-    ReplPreferencesStore.toggleFoldGutter(e.target.checked);
+  
+  onToggleFoldGutter (e) {
+    ReplPreferencesStore.toggleFoldGutter(e.target.checked)
   }
-
-  onToggleLineNumberGutter(e) {
-    ReplPreferencesStore.toggleLineNumberGutter(e.target.checked);
+  
+  onToggleLineNumberGutter (e) {
+    ReplPreferencesStore.toggleLineNumberGutter(e.target.checked)
   }
-
-  onChangeHistorySize(e) {
-    ReplPreferencesStore.onSetHistorySize(e.target.value);
+  
+  onChangeHistorySize (e) {
+    ReplPreferencesStore.onSetHistorySize(e.target.value)
   }
-
-  onSetIndentUnit(e) {
-    ReplPreferencesStore.onSetIndentUnit(Math.max(2, Math.min(12, e.target.value >>> 0)));
+  
+  onSetIndentUnit (e) {
+    ReplPreferencesStore.onSetIndentUnit(Math.max(2, Math.min(12, e.target.value >>>
+      0)))
   }
-
-  onSetTabSize(e) {
-    ReplPreferencesStore.onSetTabSize(Math.max(2, Math.min(12, e.target.value >>> 0)));
+  
+  onSetTabSize (e) {
+    ReplPreferencesStore.onSetTabSize(Math.max(2, Math.min(12, e.target.value >>>
+      0)))
   }
-
-  onToggleHistoryAggressive(e) {
-    ReplPreferencesStore.toggleHistoryAggressive(e.target.value === 'true');
+  
+  onToggleHistoryAggressive (e) {
+    ReplPreferencesStore.toggleHistoryAggressive(e.target.value === 'true')
   }
-
-  onCloseNPMPath(e) {
-    let path = e.target.dataset.path;
-    ReplPreferencesStore.removeNPMPath(path);
+  
+  onCloseNPMPath (e) {
+    let path = e.target.dataset.path
+    ReplPreferencesStore.removeNPMPath(path)
   }
-
-  resetNPMPath(e) {
-    ReplPreferencesStore.resetNPMPaths();
+  
+  resetNPMPath (e) {
+    ReplPreferencesStore.resetNPMPaths()
   }
-
-  addNPMPath(e) {
+  
+  addNPMPath (e) {
     let result = ipcRenderer.sendSync('application:open-sync-resource', {
       title: 'Add node modules path',
       buttonLabel: 'Add',
       properties: ['openDirectory']
-    });
-    if(result.length) {
-      ReplPreferencesStore.addNPMPath(result[0]);
+    })
+    if (result.length) {
+      ReplPreferencesStore.addNPMPath(result[0])
     }
   }
-
-  onMoveNPMPathUp(e) {
-    let path = e.target.dataset.path;
-    ReplPreferencesStore.moveNPMPath(path, -1);
+  
+  onMoveNPMPathUp (e) {
+    let path = e.target.dataset.path
+    ReplPreferencesStore.moveNPMPath(path, -1)
   }
-
-  onMoveNPMPathDown(e) {
-    let path = e.target.dataset.path;
-    ReplPreferencesStore.moveNPMPath(path, 1);
+  
+  onMoveNPMPathDown (e) {
+    let path = e.target.dataset.path
+    ReplPreferencesStore.moveNPMPath(path, 1)
   }
-
-  onParinferModeChange(e) {
-    ReplPreferencesStore.onParinferModeChange(e.target.value);
+  
+  onParinferModeChange (e) {
+    ReplPreferencesStore.onParinferModeChange(e.target.value)
   }
-
-  onParinferPreviewChange(e) {
-    ReplPreferencesStore.onParinferPreviewChange(e.target.checked);
+  
+  onParinferPreviewChange (e) {
+    ReplPreferencesStore.onParinferPreviewChange(e.target.checked)
   }
-
-  onSetTypeScriptOptions(name) {
-    return e => ReplPreferencesStore.onSetTypeScriptOptions(name, e.target.checked);
+  
+  onSetTypeScriptOptions (name) {
+    return e => ReplPreferencesStore.onSetTypeScriptOptions(name, e.target.checked)
   }
-
-  onSetClojureScriptOptions(name) {
-    return e => ReplPreferencesStore.onSetClojureScriptOptions(name, e.target.checked);
+  
+  onSetClojureScriptOptions (name) {
+    return e => ReplPreferencesStore.onSetClojureScriptOptions(name, e.target.checked)
   }
-
-  showLangPreferences() {
-    if(this.state.lang === 'ts') { return this.showTypeScriptPreferences(); }
-    else if(this.state.lang === 'js') { return this.showJavaScriptPreferences(); }
-    else if(this.state.lang === 'cljs') { return this.showClojureScriptPreferences(); }
-
-    return null;
+  
+  showLangPreferences () {
+    if (this.state.lang === 'ts') {
+      return this.showTypeScriptPreferences()
+    } else if (this.state.lang === 'js') {
+      return this.showJavaScriptPreferences()
+    } else if (this.state.lang === 'cljs') {
+      return this.showClojureScriptPreferences()
+    }
+    
+    return null
   }
-
-  showClojureScriptPreferences() {
-    const imgURL = `./logos/${this.state.lang}.png`;
-    let icon = <img className='lang-img cljs-img' src={imgURL} title='ClojureScript Warning Options'/>;
+  
+  showClojureScriptPreferences () {
+    const imgURL = `./logos/${this.state.lang}.png`
+    let icon = <img className='lang-img cljs-img' src={imgURL}
+                    title='ClojureScript Warning Options'/>
     const config = [
-      { name: 'preamble-missing', tip: 'missing preamble'},
-      { name: 'undeclared-var', tip: 'undeclared var'},
-      { name: 'undeclared-ns', tip: 'var references non-existent namespace'},
-      { name: 'undeclared-ns-form', tip: 'namespace reference in ns form that does not exist'},
-      { name: 'redef', tip: 'var redefinition'},
-      { name: 'dynamic', tip: 'dynamic binding of non-dynamic var'},
-      { name: 'fn-var', tip: 'var previously bound to fn changed to different type'},
-      { name: 'fn-arity', tip: 'invalid invoke arity'},
-      { name: 'fn-deprecated', tip: 'deprecated function usage'},
-      { name: 'protocol-deprecated', tip: 'deprecated protocol usage'},
-      { name: 'undeclared-protocol-symbol', tip: 'undeclared protocol referred'},
-      { name: 'invalid-protocol-symbol', tip: 'invalid protocol symbol'},
-      { name: 'multiple-variadic-overloads', tip: 'multiple variadic arities'},
-      { name: 'variadic-max-arity', tip: 'arity greater than variadic arity'},
-      { name: 'overload-arity', tip: 'duplicate arities'},
-      { name: 'extending-base-js-type', tip: 'JavaScript base type extension'},
-      { name: 'invoke-ctor', tip: 'type constructor invoked as function'},
-      { name: 'invalid-arithmetic', tip: 'invalid arithmetic'},
-      { name: 'protocol-invalid-method', tip: 'protocol method does not match declaration'},
-      { name: 'protocol-duped-method', tip: 'duplicate protocol method implementation'},
-      { name: 'protocol-multiple-impls', tip: 'protocol implemented multiple times'},
-      { name: 'single-segment-namespace', tip: 'single segment namespace'},
-    ];
-
+      { name: 'preamble-missing', tip: 'missing preamble' },
+      { name: 'undeclared-var', tip: 'undeclared var' },
+      { name: 'undeclared-ns', tip: 'var references non-existent namespace' },
+      {
+        name: 'undeclared-ns-form',
+        tip: 'namespace reference in ns form that does not exist'
+      },
+      { name: 'redef', tip: 'var redefinition' },
+      { name: 'dynamic', tip: 'dynamic binding of non-dynamic var' },
+      {
+        name: 'fn-var',
+        tip: 'var previously bound to fn changed to different type'
+      },
+      { name: 'fn-arity', tip: 'invalid invoke arity' },
+      { name: 'fn-deprecated', tip: 'deprecated function usage' },
+      { name: 'protocol-deprecated', tip: 'deprecated protocol usage' },
+      {
+        name: 'undeclared-protocol-symbol',
+        tip: 'undeclared protocol referred'
+      },
+      { name: 'invalid-protocol-symbol', tip: 'invalid protocol symbol' },
+      { name: 'multiple-variadic-overloads', tip: 'multiple variadic arities' },
+      { name: 'variadic-max-arity', tip: 'arity greater than variadic arity' },
+      { name: 'overload-arity', tip: 'duplicate arities' },
+      { name: 'extending-base-js-type', tip: 'JavaScript base type extension' },
+      { name: 'invoke-ctor', tip: 'type constructor invoked as function' },
+      { name: 'invalid-arithmetic', tip: 'invalid arithmetic' },
+      {
+        name: 'protocol-invalid-method',
+        tip: 'protocol method does not match declaration'
+      },
+      {
+        name: 'protocol-duped-method',
+        tip: 'duplicate protocol method implementation'
+      },
+      {
+        name: 'protocol-multiple-impls',
+        tip: 'protocol implemented multiple times'
+      },
+      { name: 'single-segment-namespace', tip: 'single segment namespace' }
+    ]
+    
     return (
       <div class='clojurescript-preferences'>
         <div className='preference'>
@@ -254,24 +288,32 @@ export default class ReplPreferences extends React.Component {
           <div className='preference-value'>
             <fieldset>
               <span className='radio-group' title='Turn Off Parinfer'>
-                <input type="radio" name="parinfer" checked={this.state.clojurescript.parinfer.mode === 'off'}
-                  value="off" onClick={this.onParinferModeChange} /> Off
+                <input type="radio" name="parinfer"
+                       checked={this.state.clojurescript.parinfer.mode ===
+                       'off'}
+                       value="off" onClick={this.onParinferModeChange}/> Off
               </span>
               <span className='radio-group'>
-                <input type="radio" name="parinfer" checked={this.state.clojurescript.parinfer.mode === 'indent'}
-                  value="indent" onClick={this.onParinferModeChange} /> Indent Mode
+                <input type="radio" name="parinfer"
+                       checked={this.state.clojurescript.parinfer.mode ===
+                       'indent'}
+                       value="indent" onClick={this.onParinferModeChange}/> Indent Mode
               </span>
               <span className='radio-group'>
-                <input type="radio" name="parinfer" checked={this.state.clojurescript.parinfer.mode === 'paren'}
-                  value="paren" onClick={this.onParinferModeChange} /> Parent Mode
+                <input type="radio" name="parinfer"
+                       checked={this.state.clojurescript.parinfer.mode ===
+                       'paren'}
+                       value="paren" onClick={this.onParinferModeChange}/> Parent Mode
               </span>
             </fieldset>
             {
               this.state.clojurescript.parinfer.mode === 'indent'
-                ? <span className='checkbox-group' title="it shows the cursor's scope on an empty line by inserting close-parens after it">
+                ? <span className='checkbox-group'
+                        title="it shows the cursor's scope on an empty line by inserting close-parens after it">
                     <input type="checkbox" name="previewCursorScope"
-                      checked={this.state.clojurescript.parinfer.previewCursorScope} value=""
-                      onClick={this.onParinferPreviewChange} /> Preview Cursor Scope
+                           checked={this.state.clojurescript.parinfer.previewCursorScope}
+                           value=""
+                           onClick={this.onParinferPreviewChange}/> Preview Cursor Scope
                   </span>
                 : null
             }
@@ -285,35 +327,67 @@ export default class ReplPreferences extends React.Component {
             {
               _.map(config, (c, idx) => (
                 <span className='checkbox-group' title={c.tip}>
-                  <input type="checkbox" name={"cljs-compile-" + idx} checked={this.state.clojurescript[c.name]} value=""
-                    onClick={this.onSetClojureScriptOptions(c.name)} /> {_.startCase(c.name)}
+                  <input type="checkbox" name={'cljs-compile-' + idx}
+                         checked={this.state.clojurescript[c.name]} value=""
+                         onClick={this.onSetClojureScriptOptions(c.name)}/> {_.startCase(c.name)}
                 </span>
               ))
             }
           </div>
         </div>
       </div>
-    );
-
+    )
+    
   }
-
-  showTypeScriptPreferences() {
-    const imgURL = `./logos/${this.state.lang}.png`;
-    let icon = <img className='lang-img ts-img' src={imgURL} title='TS Preferences'/>;
+  
+  showTypeScriptPreferences () {
+    const imgURL = `./logos/${this.state.lang}.png`
+    let icon = <img className='lang-img ts-img' src={imgURL}
+                    title='TS Preferences'/>
     const config = [
-      { name: 'ignoreSemanticError', tip: 'Ignore semantic errors'},
-      { name: 'noImplicitAny', tip: "Raise error on expressions and declarations with an implied 'any' type"},
-      { name: 'preserveConstEnums', tip: 'Do not erase const enum declarations in generated code'},
-      { name: 'allowUnusedLabels', tip: 'Do not report errors on unused labels'},
-      { name: 'noImplicitReturns', tip: 'Report error when not all code paths in function return a value'},
-      { name: 'noFallthroughCasesInSwitch', tip: 'Report errors for fallthrough cases in switch statement'},
-      { name: 'allowUnreachableCode', tip: 'Do not report errors on unreachable code'},
-      { name: 'forceConsistentCasingInFileNames', tip: 'Disallow inconsistently-cased references to the same file'},
-      { name: 'allowSyntheticDefaultImports', tip: 'Allow default imports from modules with no default export'},
-      { name: 'allowJs', tip: 'Allow JavaScript files to be compiled'},
-      { name: 'noImplicitUseStrict', tip: 'Do not emit "use strict" directives in module output'},
-      { name: 'noEmitHelpers', tip: 'Do not generate custom helper functions like __extends in compiled output'},
-    ];
+      { name: 'ignoreSemanticError', tip: 'Ignore semantic errors' },
+      {
+        name: 'noImplicitAny',
+        tip: 'Raise error on expressions and declarations with an implied \'any\' type'
+      },
+      {
+        name: 'preserveConstEnums',
+        tip: 'Do not erase const enum declarations in generated code'
+      },
+      {
+        name: 'allowUnusedLabels',
+        tip: 'Do not report errors on unused labels'
+      },
+      {
+        name: 'noImplicitReturns',
+        tip: 'Report error when not all code paths in function return a value'
+      },
+      {
+        name: 'noFallthroughCasesInSwitch',
+        tip: 'Report errors for fallthrough cases in switch statement'
+      },
+      {
+        name: 'allowUnreachableCode',
+        tip: 'Do not report errors on unreachable code'
+      },
+      {
+        name: 'forceConsistentCasingInFileNames',
+        tip: 'Disallow inconsistently-cased references to the same file'
+      },
+      {
+        name: 'allowSyntheticDefaultImports',
+        tip: 'Allow default imports from modules with no default export'
+      },
+      { name: 'allowJs', tip: 'Allow JavaScript files to be compiled' },
+      {
+        name: 'noImplicitUseStrict',
+        tip: 'Do not emit "use strict" directives in module output'
+      },
+      {
+        name: 'noEmitHelpers',
+        tip: 'Do not generate custom helper functions like __extends in compiled output'
+      }
+    ]
     return (
       <div class='typescript-preferences'>
         <div className='preference'>
@@ -324,20 +398,22 @@ export default class ReplPreferences extends React.Component {
             {
               _.map(config, (c, idx) => (
                 <span className='checkbox-group' title={c.tip}>
-                  <input type="checkbox" name={"ts-compile-" + idx} checked={this.state.typescript[c.name]} value=""
-                    onClick={this.onSetTypeScriptOptions(c.name)} /> {_.startCase(c.name)}
+                  <input type="checkbox" name={'ts-compile-' + idx}
+                         checked={this.state.typescript[c.name]} value=""
+                         onClick={this.onSetTypeScriptOptions(c.name)}/> {_.startCase(c.name)}
                 </span>
               ))
             }
           </div>
         </div>
       </div>
-    );
+    )
   }
-
-  showJavaScriptPreferences() {
-    const imgURL = `./logos/${this.state.lang}.png`;
-    let icon = <img className='lang-img js-img' src={imgURL} title='JS Preferences'/>;
+  
+  showJavaScriptPreferences () {
+    const imgURL = `./logos/${this.state.lang}.png`
+    let icon = <img className='lang-img js-img' src={imgURL}
+                    title='JS Preferences'/>
     return (
       <div class='javascript-preferences'>
         <div className='preference'>
@@ -347,44 +423,54 @@ export default class ReplPreferences extends React.Component {
           <div className='preference-value'>
             <fieldset>
               <span className='radio-group'>
-                <input type="radio" name="mode" disabled={this.state.lang !== 'js'} checked={this.state.mode === 'Sloppy'} value="Sloppy" onClick={this.onModeChange} /> Sloppy
+                <input type="radio" name="mode"
+                       disabled={this.state.lang !== 'js'}
+                       checked={this.state.mode === 'Sloppy'} value="Sloppy"
+                       onClick={this.onModeChange}/> Sloppy
               </span>
               <span className='radio-group'>
-                <input type="radio" name="mode" disabled={this.state.lang !== 'js'} checked={this.state.mode === 'Strict'} value="Strict" onClick={this.onModeChange} /> Strict
+                <input type="radio" name="mode"
+                       disabled={this.state.lang !== 'js'}
+                       checked={this.state.mode === 'Strict'} value="Strict"
+                       onClick={this.onModeChange}/> Strict
               </span>
             </fieldset>
           </div>
         </div>
-        <div className='preference' title='enable babel transcompiler for javascript'>
+        <div className='preference'
+             title='enable babel transcompiler for javascript'>
           <div className='preference-name'>
             Babel Transform {icon}
           </div>
           <div className='preference-value'>
             <span className='checkbox-group'>
               <input type="checkbox" name="babel"
-                checked={this.state.babel} value=""
-                disabled={this.state.lang !== 'js'} onClick={this.onBabelChange} />
+                     checked={this.state.babel} value=""
+                     disabled={this.state.lang !== 'js'}
+                     onClick={this.onBabelChange}/>
             </span>
           </div>
         </div>
-        <div className='preference' title='await expression ￫ (async function(){ let result = (await expression); return result; }())'>
+        <div className='preference'
+             title='await expression ￫ (async function(){ let result = (await expression); return result; }())'>
           <div className='preference-name'>
             Auto Async Wrapper {icon}
           </div>
           <div className='preference-value'>
             <span className='checkbox-group'>
               <input type="checkbox" name="await"
-                checked={this.state.asyncWrap} value=""
-                disabled={this.state.lang !== 'js'} onClick={this.onAsyncWrapChange} />
+                     checked={this.state.asyncWrap} value=""
+                     disabled={this.state.lang !== 'js'}
+                     onClick={this.onAsyncWrapChange}/>
             </span>
           </div>
         </div>
       </div>
-    );
+    )
   }
-
-  render() {
-    let clazz = `repl-preferences-panel ${this.state.open ? 'open' : ''}`;
+  
+  render () {
+    let clazz = `repl-preferences-panel ${this.state.open ? 'open' : ''}`
     return (
       <div className={clazz}>
         <div className="repl-preferences-head">
@@ -403,10 +489,14 @@ export default class ReplPreferences extends React.Component {
             <div className='preference-value'>
               <fieldset>
                 <span className='radio-group'>
-                  <input type="radio" name="theme" checked={this.state.theme === 'Dark Theme'} value="Dark Theme" onClick={this.onThemeChange} /> dark
+                  <input type="radio" name="theme"
+                         checked={this.state.theme === 'Dark Theme'}
+                         value="Dark Theme" onClick={this.onThemeChange}/> dark
                 </span>
                 <span className='radio-group'>
-                  <input type="radio" name="theme" checked={this.state.theme === 'Light Theme'} value="Light Theme" onClick={this.onThemeChange} /> light
+                  <input type="radio" name="theme"
+                         checked={this.state.theme === 'Light Theme'}
+                         value="Light Theme" onClick={this.onThemeChange}/> light
                 </span>
               </fieldset>
             </div>
@@ -420,10 +510,14 @@ export default class ReplPreferences extends React.Component {
             <div className='preference-value'>
               <fieldset>
                 <span className='radio-group'>
-                  <input type="radio" name="editor" checked={this.state.editor === 'REPL'} value="REPL" onClick={this.onEditorChange} /> REPL
+                  <input type="radio" name="editor"
+                         checked={this.state.editor === 'REPL'} value="REPL"
+                         onClick={this.onEditorChange}/> REPL
                 </span>
                 <span className='radio-group'>
-                  <input type="radio" name="editor" checked={this.state.editor === 'Notebook'} value="Notebook" onClick={this.onEditorChange} /> Notebook<small>(beta)</small>
+                  <input type="radio" name="editor"
+                         checked={this.state.editor === 'Notebook'}
+                         value="Notebook" onClick={this.onEditorChange}/> Notebook<small>(beta)</small>
                 </span>
               </fieldset>
             </div>
@@ -436,7 +530,8 @@ export default class ReplPreferences extends React.Component {
               <select onChange={this.onLangChange} title='Languages'>
                 {
                   _.map(langs, (v, k) => {
-                    return <option selected={k === this.state.lang} value={k}>{v}</option>
+                    return <option selected={k === this.state.lang}
+                                   value={k}>{v}</option>
                   })
                 }
               </select>
@@ -451,7 +546,9 @@ export default class ReplPreferences extends React.Component {
             </div>
             <div className='preference-value'>
               <span className='checkbox-group'>
-                <input type="checkbox" name="execution-time" checked={this.state.executionTime} value="" onClick={this.onToggleExecutionTime} />
+                <input type="checkbox" name="execution-time"
+                       checked={this.state.executionTime} value=""
+                       onClick={this.onToggleExecutionTime}/>
               </span>
             </div>
           </div>
@@ -461,7 +558,10 @@ export default class ReplPreferences extends React.Component {
             </div>
             <div className='preference-value'>
               <span className='textbox'>
-                <input type="number" name="exec-timeout" placeholder="(0 for no timeout)" value={this.state.timeout} min="0" onChange={this.onChangeTimeout} />
+                <input type="number" name="exec-timeout"
+                       placeholder="(0 for no timeout)"
+                       value={this.state.timeout} min="0"
+                       onChange={this.onChangeTimeout}/>
               </span>
             </div>
           </div>
@@ -472,16 +572,24 @@ export default class ReplPreferences extends React.Component {
             <div className='preference-value'>
               <fieldset>
                 <span className='radio-group'>
-                  <input type="radio" name="key-map" checked={this.state.keyMap === 'default'} value="default" onClick={this.onKeyMapChange} /> default
+                  <input type="radio" name="key-map"
+                         checked={this.state.keyMap === 'default'}
+                         value="default" onClick={this.onKeyMapChange}/> default
                 </span>
                 <span className='radio-group'>
-                  <input type="radio" name="key-map" checked={this.state.keyMap === 'sublime'} value="sublime" onClick={this.onKeyMapChange} /> sublime
+                  <input type="radio" name="key-map"
+                         checked={this.state.keyMap === 'sublime'}
+                         value="sublime" onClick={this.onKeyMapChange}/> sublime
                 </span>
                 <span className='radio-group'>
-                  <input type="radio" name="key-map" checked={this.state.keyMap === 'vim'} value="vim" onClick={this.onKeyMapChange} /> vim
+                  <input type="radio" name="key-map"
+                         checked={this.state.keyMap === 'vim'} value="vim"
+                         onClick={this.onKeyMapChange}/> vim
                 </span>
                 <span className='radio-group'>
-                  <input type="radio" name="key-map" checked={this.state.keyMap === 'emacs'} value="emacs" onClick={this.onKeyMapChange} /> emacs
+                  <input type="radio" name="key-map"
+                         checked={this.state.keyMap === 'emacs'} value="emacs"
+                         onClick={this.onKeyMapChange}/> emacs
                 </span>
               </fieldset>
             </div>
@@ -492,7 +600,9 @@ export default class ReplPreferences extends React.Component {
             </div>
             <div className='preference-value'>
               <span className='checkbox-group'>
-                <input type="checkbox" name="line" checked={this.state.toggleLineNumberGutter} value="" onClick={this.onToggleLineNumberGutter} />
+                <input type="checkbox" name="line"
+                       checked={this.state.toggleLineNumberGutter} value=""
+                       onClick={this.onToggleLineNumberGutter}/>
               </span>
             </div>
           </div>
@@ -502,18 +612,22 @@ export default class ReplPreferences extends React.Component {
             </div>
             <div className='preference-value'>
               <span className='checkbox-group'>
-                <input type="checkbox" name="fold" checked={this.state.toggleFoldGutter} value="" onClick={this.onToggleFoldGutter} />
+                <input type="checkbox" name="fold"
+                       checked={this.state.toggleFoldGutter} value=""
+                       onClick={this.onToggleFoldGutter}/>
               </span>
             </div>
           </div>
-          <div className='preference' title='How many spaces a block should be indented'>
+          <div className='preference'
+               title='How many spaces a block should be indented'>
             <div className='preference-name'>
               Code Indentation
             </div>
             <div className='preference-value'>
               <span className='textbox'>
-                <input type="number" name="indentation-size" value={this.state.indentUnit}
-                  min="2" max="12" onChange={this.onSetIndentUnit} />
+                <input type="number" name="indentation-size"
+                       value={this.state.indentUnit}
+                       min="2" max="12" onChange={this.onSetIndentUnit}/>
               </span>
             </div>
           </div>
@@ -524,7 +638,7 @@ export default class ReplPreferences extends React.Component {
             <div className='preference-value'>
               <span className='textbox'>
                 <input type="number" name="tab-size" value={this.state.tabSize}
-                  min="2" max="12" onChange={this.onSetTabSize} />
+                       min="2" max="12" onChange={this.onSetTabSize}/>
               </span>
             </div>
           </div>
@@ -534,7 +648,9 @@ export default class ReplPreferences extends React.Component {
             </div>
             <div className='preference-value'>
               <span className='checkbox-group'>
-                <input type="checkbox" name="auto" checked={this.state.toggleAutomaticAutoComplete} value="" onClick={this.onToggleAutomaticAutoComplete} />
+                <input type="checkbox" name="auto"
+                       checked={this.state.toggleAutomaticAutoComplete} value=""
+                       onClick={this.onToggleAutomaticAutoComplete}/>
               </span>
             </div>
           </div>
@@ -544,29 +660,37 @@ export default class ReplPreferences extends React.Component {
             </div>
             <div className='preference-value'>
               <span className='textbox'>
-                <input type="number" name="suggestion-delay" placeholder="(0 for no delay)"
-                  value={this.state.suggestionDelay} min="0" disabled={this.state.toggleAutomaticAutoComplete}
-                  onChange={this.onChangeSuggestionDelay} />
+                <input type="number" name="suggestion-delay"
+                       placeholder="(0 for no delay)"
+                       value={this.state.suggestionDelay} min="0"
+                       disabled={this.state.toggleAutomaticAutoComplete}
+                       onChange={this.onChangeSuggestionDelay}/>
               </span>
             </div>
           </div>
-          <div className='preference' title='Toggle run mode (⇧ + ↲) / ↲(default)'>
+          <div className='preference'
+               title='Toggle run mode (⇧ + ↲) / ↲(default)'>
             <div className='preference-name'>
               Toggle Run Mode (⇧ + ↲) / ↲
             </div>
             <div className='preference-value'>
               <span className='checkbox-group'>
-                <input type="checkbox" name="toggle-shift-enter" checked={this.state.toggleShiftEnter} value="" onClick={this.onToggleShiftEnter} />
+                <input type="checkbox" name="toggle-shift-enter"
+                       checked={this.state.toggleShiftEnter} value=""
+                       onClick={this.onToggleShiftEnter}/>
               </span>
             </div>
           </div>
-          <div className='preference' title='Auto suggest selection result on ↲'>
+          <div className='preference'
+               title='Auto suggest selection result on ↲'>
             <div className='preference-name'>
               Auto Suggest Selection on ↲
             </div>
             <div className='preference-value'>
               <span className='checkbox-group'>
-                <input type="checkbox" name="toggle-auto-suggestion" checked={this.state.autoCompleteOnEnter} value="" onClick={this.onToggleAutoCompleteOnEnter} />
+                <input type="checkbox" name="toggle-auto-suggestion"
+                       checked={this.state.autoCompleteOnEnter} value=""
+                       onClick={this.onToggleAutoCompleteOnEnter}/>
               </span>
             </div>
           </div>
@@ -577,7 +701,8 @@ export default class ReplPreferences extends React.Component {
             <div className='preference-value'>
               <span className='checkbox-group'>
                 <input type="checkbox" name="toggle-transpile"
-                  checked={this.state.transpile} value="" onClick={this.onToggleTranspile} />
+                       checked={this.state.transpile} value=""
+                       onClick={this.onToggleTranspile}/>
               </span>
             </div>
           </div>
@@ -587,7 +712,9 @@ export default class ReplPreferences extends React.Component {
             </div>
             <div className='preference-value'>
               <span className='checkbox-group'>
-                <input type="checkbox" name="toggle-watermark" checked={this.state.watermark} value="" onClick={this.onWatermarkChange} />
+                <input type="checkbox" name="toggle-watermark"
+                       checked={this.state.watermark} value=""
+                       onClick={this.onWatermarkChange}/>
               </span>
             </div>
           </div>
@@ -597,7 +724,9 @@ export default class ReplPreferences extends React.Component {
             </div>
             <div className='preference-value'>
               <span className='checkbox-group'>
-                <input type="checkbox" name="warn-before-quit" checked={this.state.promptOnClose} value="" onClick={this.onTogglePromptOnClose} />
+                <input type="checkbox" name="warn-before-quit"
+                       checked={this.state.promptOnClose} value=""
+                       onClick={this.onTogglePromptOnClose}/>
               </span>
             </div>
           </div>
@@ -607,10 +736,13 @@ export default class ReplPreferences extends React.Component {
             </div>
             <div className='preference-value'>
               <div>{this.state.loadScript}</div>
-              <button type='button' name='startup-script' onClick={this.selectLoadScript}> Choose File</button>
+              <button type='button' name='startup-script'
+                      onClick={this.selectLoadScript}> Choose File
+              </button>
               {
                 this.state.loadScript
-                  ? <button type='button' name='reset-startup-script' onClick={this.resetLoadScript}> reset</button>
+                  ? <button type='button' name='reset-startup-script'
+                            onClick={this.resetLoadScript}> reset</button>
                   : null
               }
             </div>
@@ -625,25 +757,31 @@ export default class ReplPreferences extends React.Component {
                   return (
                     <div>
                       {path}
-                      <i className='fa fa-close close' data-path={path} onClick={this.onCloseNPMPath}></i>
+                      <i className='fa fa-close close' data-path={path}
+                         onClick={this.onCloseNPMPath}></i>
                       {
                         pos !== 0
-                          ? <i className='fa fa-arrow-up' data-path={path} onClick={this.onMoveNPMPathUp}></i>
+                          ? <i className='fa fa-arrow-up' data-path={path}
+                               onClick={this.onMoveNPMPathUp}></i>
                           : null
                       }
                       {
                         pos < this.state.npmPaths.length - 1
-                          ? <i className='fa fa-arrow-down' data-path={path} onClick={this.onMoveNPMPathDown}></i>
+                          ? <i className='fa fa-arrow-down' data-path={path}
+                               onClick={this.onMoveNPMPathDown}></i>
                           : null
                       }
                     </div>
-                  );
+                  )
                 })
               }
-              <button type='button' name='npm-path' onClick={this.addNPMPath}> Add</button>
+              <button type='button' name='npm-path'
+                      onClick={this.addNPMPath}> Add
+              </button>
               {
                 this.state.npmPaths.length
-                  ? <button type='button' name='reset-npm-path' onClick={this.resetNPMPath}> reset</button>
+                  ? <button type='button' name='reset-npm-path'
+                            onClick={this.resetNPMPath}> reset</button>
                   : null
               }
             </div>
@@ -654,21 +792,30 @@ export default class ReplPreferences extends React.Component {
             </div>
             <div className='preference-value'>
               <span className='textbox'>
-                <input type="number" name="history-size" placeholder="(0 for no history)" value={this.state.historySize} min="0" onChange={this.onChangeHistorySize} />
+                <input type="number" name="history-size"
+                       placeholder="(0 for no history)"
+                       value={this.state.historySize} min="0"
+                       onChange={this.onChangeHistorySize}/>
               </span>
             </div>
           </div>
-          <div className='preference' title='Persistent History on executing each command or on close session'>
+          <div className='preference'
+               title='Persistent History on executing each command or on close session'>
             <div className='preference-name'>
               History Save Mode
             </div>
             <div className='preference-value'>
               <fieldset>
                 <span className='radio-group'>
-                  <input type="radio" name="history-aggressive" checked={this.state.historyAggressive === true} value="true" onClick={this.onToggleHistoryAggressive} /> Aggressive
+                  <input type="radio" name="history-aggressive"
+                         checked={this.state.historyAggressive === true}
+                         value="true" onClick={this.onToggleHistoryAggressive}/> Aggressive
                 </span>
                 <span className='radio-group'>
-                  <input type="radio" name="history-aggressive" checked={this.state.historyAggressive === false} value="false" onClick={this.onToggleHistoryAggressive} /> On Session Close
+                  <input type="radio" name="history-aggressive"
+                         checked={this.state.historyAggressive === false}
+                         value="false"
+                         onClick={this.onToggleHistoryAggressive}/> On Session Close
                 </span>
               </fieldset>
             </div>
@@ -676,6 +823,6 @@ export default class ReplPreferences extends React.Component {
           <div className='statusbar-placeholder'></div>
         </div>
       </div>
-    );
+    )
   }
 }

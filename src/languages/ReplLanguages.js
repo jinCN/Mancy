@@ -1,4 +1,4 @@
-import {js, coffee, ts, ls, cljs} from './ReplLangWrapper';
+import { js, coffee, ts, ls, cljs } from './ReplLangWrapper'
 
 // node repl wrappers
 const langs = {
@@ -6,44 +6,44 @@ const langs = {
   coffee,
   ts,
   ls,
-  cljs,
-};
+  cljs
+}
 
-const repls = Object.keys(langs).map(l => langs[l].getREPL());
+const repls = Object.keys(langs).map(l => langs[l].getREPL())
 
-let repl = langs.js;
-repl.setREPL();
+let repl = langs.js
+repl.setREPL()
 
 const getREPL = () => {
-  return repl.getREPL();
+  return repl.getREPL()
 }
 
 // being used for repl mode
 const getREPLProvider = () => {
-  return langs.js.repl;
+  return langs.js.repl
 }
 
 const setREPL = (name) => {
-  if(!langs[name]) {
-    throw new Error(`Unsupported lang ${name}`);
+  if (!langs[name]) {
+    throw new Error(`Unsupported lang ${name}`)
   }
-  repl = langs[name];
-  repl.setREPL();
-
-  const langREPL = repl.getREPL();
-  if(langREPL.updateCompilerOptions) {
-    langREPL.updateCompilerOptions();
+  repl = langs[name]
+  repl.setREPL()
+  
+  const langREPL = repl.getREPL()
+  if (langREPL.updateCompilerOptions) {
+    langREPL.updateCompilerOptions()
   }
-
-  return langREPL;
+  
+  return langREPL
 }
 
 const getNamespace = () => {
-  const langREPL = getREPL();
-  if(typeof langREPL.getNamespace === 'function') {
-    return langREPL.getNamespace();
+  const langREPL = getREPL()
+  if (typeof langREPL.getNamespace === 'function') {
+    return langREPL.getNamespace()
   }
-  return '';
+  return ''
 }
 
 const aliases = {
@@ -51,17 +51,21 @@ const aliases = {
   coffee: 'coffee', litcoffee: 'coffee', 'coffee.md': 'coffee',
   ls: 'ls',
   ts: 'ts', tsx: 'ts',
-  cljs: 'cljs',
-};
+  cljs: 'cljs'
+}
 
 const qualifiedNames = {
-  js: 'javascript', json: 'javascript', node: 'javascript',
-  coffee: 'x-coffeescript', litcoffee: 'x-coffeescript', 'coffee.md': 'x-coffeescript',
+  js: 'javascript',
+  json: 'javascript',
+  node: 'javascript',
+  coffee: 'x-coffeescript',
+  litcoffee: 'x-coffeescript',
+  'coffee.md': 'x-coffeescript',
   ls: 'x-liveScript',
-  ts: 'typescript', tsx: 'typescript',
+  ts: 'typescript',
+  tsx: 'typescript',
   cljs: 'x-clojure'
-};
-
+}
 
 export default {
   getREPL,
@@ -70,5 +74,6 @@ export default {
   getNamespace,
   getLangName: (ext) => aliases[ext],
   getLangQualifiedName: (ext) => qualifiedNames[ext],
-  setLookupPath: (paths) => repls.forEach(repl => repl.setLookupPath && repl.setLookupPath(paths))
-};
+  setLookupPath: (paths) => repls.forEach(repl => repl.setLookupPath &&
+    repl.setLookupPath(paths))
+}

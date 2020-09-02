@@ -1,28 +1,31 @@
-import React from 'react';
-import _ from 'lodash';
+import React from 'react'
+import _ from 'lodash'
 
 export default class ReplOutputCljsDocs extends React.Component {
-  constructor(props) {
-    super(props);
+  constructor (props) {
+    super(props)
     this.state = {
-      collapse: props.collapse == null ? true : props.collapse,
-    };
-
-    this.onToggleCollapse = this.onToggleCollapse.bind(this);
+      collapse: props.collapse == null ? true : props.collapse
+    }
+    
+    this.onToggleCollapse = this.onToggleCollapse.bind(this)
   }
-
-  shouldComponentUpdate(nextProps, nextState) {
-    return !(_.isEqual(nextState, this.state) && _.isEqual(nextProps, this.props));
+  
+  shouldComponentUpdate (nextProps, nextState) {
+    return !(_.isEqual(nextState, this.state) &&
+      _.isEqual(nextProps, this.props))
   }
-
-  onToggleCollapse() {
+  
+  onToggleCollapse () {
     this.setState({
       collapse: !this.state.collapse
-    });
+    })
   }
-
-  render() {
-    let clazz = this.state.collapse ? 'fa fa-minus-square-o' : 'fa fa-plus-square-o';
+  
+  render () {
+    let clazz = this.state.collapse
+      ? 'fa fa-minus-square-o'
+      : 'fa fa-plus-square-o'
     return (
       <span className='repl-cljs-docs-fold'>
         {
@@ -33,6 +36,6 @@ export default class ReplOutputCljsDocs extends React.Component {
           </span>
         }
       </span>
-    );
+    )
   }
 }

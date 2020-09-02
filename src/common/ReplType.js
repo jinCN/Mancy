@@ -1,61 +1,63 @@
 // auto suggestion types
-const BOOLEAN = Symbol.for('boolean');
-const NUMBER = Symbol.for('number');
-const KEYWORD = Symbol.for('keyword');
-const OBJECT = Symbol.for('object');
-const SYMBOL = Symbol.for('symbol');
-const UNDEFINED = Symbol.for('undefined');
-const STRING = Symbol.for('string');
-const FUNCTION = Symbol.for('function');
+const BOOLEAN = Symbol.for('boolean')
+const NUMBER = Symbol.for('number')
+const KEYWORD = Symbol.for('keyword')
+const OBJECT = Symbol.for('object')
+const SYMBOL = Symbol.for('symbol')
+const UNDEFINED = Symbol.for('undefined')
+const STRING = Symbol.for('string')
+const FUNCTION = Symbol.for('function')
 
 //ts
-const VAR = Symbol.for('var');
-const LET = Symbol.for('let');
-const MODULE = Symbol.for('module');
-const INTERFACE = Symbol.for('interface');
-const CLASS = Symbol.for('class');
-const ALIAS = Symbol.for('alias');
-const CONST = Symbol.for('const');
-const CALL = Symbol.for('call');
-const CONSTRUCT = Symbol.for('construct');
-const TYPE = Symbol.for('type');
-const METHOD = Symbol.for('method');
-const LABEL = Symbol.for('label');
-const ENUM = Symbol.for('enum');
-const CONSTRUCTOR = Symbol.for('constructor');
-const WARNING = Symbol.for('warning');
-const INDEX = Symbol.for('index');
-const PARAMETER = Symbol.for('parameter');
-const PROPERTY = Symbol.for('property');
-const SCRIPT = Symbol.for('script');
-const LOCAL_CLASS_ELEMENT = Symbol.for('local class');
-const LOCAL_FUNCTION_ELEMENT = Symbol.for('local function');
-const LOCAL_VARIABLE_ELEMENT = Symbol.for('local var');
-const MEMBER_GET_ACCESSOR_ELEMENT = Symbol.for('getter');
-const MEMBER_SET_ACCESSOR_ELEMENT = Symbol.for('setter');
-const PREIMITIVE_TYPE = Symbol.for('primitive type');
-const TYPE_PARAMETER_ELEMENT = Symbol.for('type parameter');
+const VAR = Symbol.for('var')
+const LET = Symbol.for('let')
+const MODULE = Symbol.for('module')
+const INTERFACE = Symbol.for('interface')
+const CLASS = Symbol.for('class')
+const ALIAS = Symbol.for('alias')
+const CONST = Symbol.for('const')
+const CALL = Symbol.for('call')
+const CONSTRUCT = Symbol.for('construct')
+const TYPE = Symbol.for('type')
+const METHOD = Symbol.for('method')
+const LABEL = Symbol.for('label')
+const ENUM = Symbol.for('enum')
+const CONSTRUCTOR = Symbol.for('constructor')
+const WARNING = Symbol.for('warning')
+const INDEX = Symbol.for('index')
+const PARAMETER = Symbol.for('parameter')
+const PROPERTY = Symbol.for('property')
+const SCRIPT = Symbol.for('script')
+const LOCAL_CLASS_ELEMENT = Symbol.for('local class')
+const LOCAL_FUNCTION_ELEMENT = Symbol.for('local function')
+const LOCAL_VARIABLE_ELEMENT = Symbol.for('local var')
+const MEMBER_GET_ACCESSOR_ELEMENT = Symbol.for('getter')
+const MEMBER_SET_ACCESSOR_ELEMENT = Symbol.for('setter')
+const PREIMITIVE_TYPE = Symbol.for('primitive type')
+const TYPE_PARAMETER_ELEMENT = Symbol.for('type parameter')
 
 //cljs
-const NAMESPACE = Symbol.for('namespace');
-const NIL = Symbol.for('nil');
-const VECTOR = Symbol.for('vector');
-const LIST = Symbol.for('list');
-const SET = Symbol.for('set');
-const MAP = Symbol.for('map');
-const ARRAY = Symbol.for('array');
-const VOLATILE = Symbol.for('volatile');
-const SEQ = Symbol.for('seq');
-const ATOM = Symbol.for('atom');
-const UUID = Symbol.for('uuid');
+const NAMESPACE = Symbol.for('namespace')
+const NIL = Symbol.for('nil')
+const VECTOR = Symbol.for('vector')
+const LIST = Symbol.for('list')
+const SET = Symbol.for('set')
+const MAP = Symbol.for('map')
+const ARRAY = Symbol.for('array')
+const VOLATILE = Symbol.for('volatile')
+const SEQ = Symbol.for('seq')
+const ATOM = Symbol.for('atom')
+const UUID = Symbol.for('uuid')
 
-const HISTORY = Symbol.for('history');
+const HISTORY = Symbol.for('history')
 
 let typeEval = (x) => {
-  try { return /\w\./.test(x) ? PROPERTY : eval(x); }
-  catch(e) {}
-  return OBJECT;
-};
+  try {
+    return /\w\./.test(x) ? PROPERTY : eval(x)
+  } catch (e) {
+  }
+  return OBJECT
+}
 
 const typeNames = {
   [BOOLEAN]: 'boolean',
@@ -103,8 +105,8 @@ const typeNames = {
   [SEQ]: 'seq',
   [ATOM]: 'atom',
   [UUID]: 'uuid',
-  [HISTORY]: 'history',
-};
+  [HISTORY]: 'history'
+}
 
 // short names are repeated - tooltip helps
 const typeNamesShort = {
@@ -153,87 +155,91 @@ const typeNamesShort = {
   [SEQ]: 's',
   [ATOM]: 'a',
   [UUID]: '#',
-  [HISTORY]: 'h',
-};
+  [HISTORY]: 'h'
+}
 
 let typeOfNonJS = (x) => {
-  var symbol = Symbol.for(x);
-  return typeNames[symbol] ? symbol : OBJECT;
+  var symbol = Symbol.for(x)
+  return typeNames[symbol] ? symbol : OBJECT
 }
 
 const es2015Keywords = [
-  "arguments",
-  "await",
-  "break",
-  "case",
-  "catch",
-  "class",
-  "const",
-  "continue",
-  "debugger",
-  "default",
-  "delete",
-  "do",
-  "else",
-  "enum",
-  "eval",
-  "export",
-  "extends",
-  "false",
-  "finally",
-  "for",
-  "function",
-  "if",
-  "implements",
-  "import",
-  "in",
-  "instanceof",
-  "interface",
-  "let",
-  "new",
-  "null",
-  "package",
-  "private",
-  "protected",
-  "public",
-  "return",
-  "static",
-  "super",
-  "switch",
-  "this",
-  "throw",
-  "true",
-  "try",
-  "typeof",
-  "var",
-  "void",
-  "while",
-  "with",
-  "yield",
-];
+  'arguments',
+  'await',
+  'break',
+  'case',
+  'catch',
+  'class',
+  'const',
+  'continue',
+  'debugger',
+  'default',
+  'delete',
+  'do',
+  'else',
+  'enum',
+  'eval',
+  'export',
+  'extends',
+  'false',
+  'finally',
+  'for',
+  'function',
+  'if',
+  'implements',
+  'import',
+  'in',
+  'instanceof',
+  'interface',
+  'let',
+  'new',
+  'null',
+  'package',
+  'private',
+  'protected',
+  'public',
+  'return',
+  'static',
+  'super',
+  'switch',
+  'this',
+  'throw',
+  'true',
+  'try',
+  'typeof',
+  'var',
+  'void',
+  'while',
+  'with',
+  'yield'
+]
 
-const isES2015Keyword = (x) => es2015Keywords.indexOf(x) !== -1;
+const isES2015Keyword = (x) => es2015Keywords.indexOf(x) !== -1
 const typeOf = (x) => {
-  if(global.Mancy.preferences.lang !== 'js') {
-    return typeOfNonJS(x);
+  if (global.Mancy.preferences.lang !== 'js') {
+    return typeOfNonJS(x)
   }
-  if(isES2015Keyword(x)) { return KEYWORD; }
-  var symbol = Symbol.for(x);
-  if(typeNames[symbol]) {
-    return symbol;
+  if (isES2015Keyword(x)) {
+    return KEYWORD
   }
-  var type = typeEval(x);
-  if(typeNames[type]) { return type;}
-  symbol = Symbol.for(typeof type);
+  var symbol = Symbol.for(x)
+  if (typeNames[symbol]) {
+    return symbol
+  }
+  var type = typeEval(x)
+  if (typeNames[type]) {
+    return type
+  }
+  symbol = Symbol.for(typeof type)
+  
+  return typeNames[symbol] ? symbol : OBJECT
+}
 
-  return typeNames[symbol] ? symbol : OBJECT;
-};
-
-const getTypeName = (symbol) => typeNames[symbol];
-const getTypeNameShort = (symbol) => typeNamesShort[symbol];
+const getTypeName = (symbol) => typeNames[symbol]
+const getTypeNameShort = (symbol) => typeNamesShort[symbol]
 
 export default {
   typeOf: typeOf,
   getTypeName: getTypeName,
   getTypeNameShort: getTypeNameShort
-};
+}

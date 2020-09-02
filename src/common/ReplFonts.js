@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import _ from 'lodash'
 
 const weights = {
   100: 'Thin',
@@ -9,8 +9,8 @@ const weights = {
   600: 'Semi Bold',
   700: 'Bold',
   800: 'Ultra Bold',
-  900: 'Heavy',
-};
+  900: 'Heavy'
+}
 
 const widths = {
   1: 'Ultra Condensed',
@@ -21,32 +21,32 @@ const widths = {
   6: 'Semi Expanded',
   7: 'Expanded',
   8: 'Extra Expanded',
-  9: 'Ultra Expanded',
-};
+  9: 'Ultra Expanded'
+}
 
 const systemFonts = (() => {
   try {
-    const settings = require('./../package.json').settings;
+    const settings = require('./../package.json').settings
     const locals = [
       { family: 'Droid Sans Mono' },
       { family: 'FiraCode' },
       { family: 'Josefin Sans' }
-    ];
-    return _.chain( locals )
+    ]
+    return _.chain(locals)
       .tap((fonts) => {
-        locals.forEach(f => fonts.push(f));
+        locals.forEach(f => fonts.push(f))
       })
-      .sortBy("family")
+      .sortBy('family')
       .map((f) => f.family)
       .uniq(true)
-      .value();
-  } catch(e) {
+      .value()
+  } catch (e) {
     // disable font preferences
-    return [];
+    return []
   }
-})();
+})()
 
-const getSystemFonts = () => systemFonts;
-const setFontFamily = (family = 'monospace', defaults = 'sans-serif') => document.body.style.fontFamily = `${family}, ${defaults}`;
+const getSystemFonts = () => systemFonts
+const setFontFamily = (family = 'monospace', defaults = 'sans-serif') => document.body.style.fontFamily = `${family}, ${defaults}`
 
-export default { getSystemFonts, setFontFamily };
+export default { getSystemFonts, setFontFamily }

@@ -1,16 +1,18 @@
-import React from 'react';
-import ReplActiveIcon from './ReplActiveIcon';
-import ReplActiveInput from './ReplActiveInput';
+import React from 'react'
+import ReplActiveIcon from './ReplActiveIcon'
+import ReplActiveInput from './ReplActiveInput'
 
 export default class ReplPrompt extends React.Component {
-  constructor(props) {
-    super(props);
+  constructor (props) {
+    super(props)
   }
-  render() {
-    let key = this.props.tag || `prompt-${(Math.random() * Math.pow(10, 9)) | 0}`;
+  
+  render () {
+    let key = this.props.tag ||
+      `prompt-${(Math.random() * Math.pow(10, 9)) | 0}`
     return (
       <div className='repl-prompt'>
-        <ReplActiveIcon />
+        <ReplActiveIcon/>
         <ReplActiveInput
           key={key}
           tag={key}
@@ -20,6 +22,6 @@ export default class ReplPrompt extends React.Component {
           command={this.props.command}
           cursor={this.props.cursor}/>
       </div>
-    );
+    )
   }
 }

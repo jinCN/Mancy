@@ -1,11 +1,11 @@
-import Reflux from 'reflux';
+import Reflux from 'reflux'
 
 const ReplStatusBarActions = Reflux.createActions([
-  "updateRunCommand",
-  "newRelease",
-  "updateLanguage",
-  "updateMode",
-  "refresh",
-  "cursorActivity"
-]);
-export default ReplStatusBarActions;
+  'updateRunCommand',
+  'newRelease',
+  'updateLanguage',
+  'updateMode',
+  'refresh',
+  'cursorActivity'
+])
+export default ReplStatusBarActions

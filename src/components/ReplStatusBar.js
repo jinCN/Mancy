@@ -1,74 +1,78 @@
-import React from 'react';
-import {shell} from 'electron';
-import ReplPreferencesActions from '../actions/ReplPreferencesActions';
-import ReplStatusBarStore from '../stores/ReplStatusBarStore';
-import ReplCommon from '../common/ReplCommon';
-import _ from 'lodash';
+import React from 'react'
+import { shell } from 'electron'
+import ReplPreferencesActions from '../actions/ReplPreferencesActions'
+import ReplStatusBarStore from '../stores/ReplStatusBarStore'
+import ReplCommon from '../common/ReplCommon'
+import _ from 'lodash'
 
 export default class ReplStatusBar extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = _.clone(ReplStatusBarStore.getStore());
-    this.onDownload = this.onDownload.bind(this);
-    this.onTriggerPreferences = this.onTriggerPreferences.bind(this);
-    this.onStoreChange = this.onStoreChange.bind(this);
-    this.getActiveHandle = this.getActiveHandle.bind(this);
+  constructor (props) {
+    super(props)
+    this.state = _.clone(ReplStatusBarStore.getStore())
+    this.onDownload = this.onDownload.bind(this)
+    this.onTriggerPreferences = this.onTriggerPreferences.bind(this)
+    this.onStoreChange = this.onStoreChange.bind(this)
+    this.getActiveHandle = this.getActiveHandle.bind(this)
   }
-
-  componentDidMount() {
-    this.unsubscribe = ReplStatusBarStore.listen(this.onStoreChange);
+  
+  componentDidMount () {
+    this.unsubscribe = ReplStatusBarStore.listen(this.onStoreChange)
   }
-
-  componentWillUnmount() {
-    this.unsubscribe();
+  
+  componentWillUnmount () {
+    this.unsubscribe()
   }
-
-  onStoreChange() {
-    this.setState(ReplStatusBarStore.getStore());
+  
+  onStoreChange () {
+    this.setState(ReplStatusBarStore.getStore())
   }
-
-  extractStatusInfo() {
-    let history = this.props.history;
-    let errors = history.filter((h) => !h.status);
+  
+  extractStatusInfo () {
+    let history = this.props.history
+    let errors = history.filter((h) => !h.status)
     return {
       commands: history.length - errors.length,
-      errors: errors.length,
-    };
-  }
-  onDownload(e) {
-    let url = (this.state.newRelease || {}).url;
-    if(url) {
-      shell.openExternal(url);
+      errors: errors.length
     }
   }
-
-  onTriggerPreferences(e) {
-    ReplPreferencesActions.togglePreferences();
+  
+  onDownload (e) {
+    let url = (this.state.newRelease || {}).url
+    if (url) {
+      shell.openExternal(url)
+    }
   }
-
-  getActiveHandle() {
-    let twoDigit = x => `${(x < 10 ? '0' : '')}${x}`;
-    let handles = process._getActiveHandles();
-    let now = new Date();
-    let [hh, mm, ss] = [now.getHours(), now.getMinutes(), now.getSeconds()];
-    let ts = `${twoDigit(hh)}:${twoDigit(mm)}:${twoDigit(ss)}`;
+  
+  onTriggerPreferences (e) {
+    ReplPreferencesActions.togglePreferences()
+  }
+  
+  getActiveHandle () {
+    let twoDigit = x => `${(x < 10 ? '0' : '')}${x}`
+    let handles = process._getActiveHandles()
+    let now = new Date()
+    let [hh, mm, ss] = [now.getHours(), now.getMinutes(), now.getSeconds()]
+    let ts = `${twoDigit(hh)}:${twoDigit(mm)}:${twoDigit(ss)}`
     let msg = _.chain(handles)
       .map(h => ReplCommon.type(h))
       .sort()
       .reduce((acc, h) => (acc[h] = acc[h] ? acc[h] + 1 : 1, acc), {})
       .map((v, k) => `${k}(${v})`)
       .tap(o => o.join(', '))
-      .value();
-    return [handles.length,
+      .value()
+    return [
+      handles.length,
       `Active handles(at ${ts}): ${msg}`]
   }
-
-  render() {
-    let {commands, errors} = this.extractStatusInfo();
-    let runHelp = this.state.runCommand ? '⇧ + ↲' : '↲';
-    let runHelpMessage = this.state.runCommand ? 'press shift + enter to run' : 'press enter to run';
-    let imgURL = `./logos/${this.state.lang}.png`;
-    let [handleCount, handleMsg] = this.getActiveHandle();
+  
+  render () {
+    let { commands, errors } = this.extractStatusInfo()
+    let runHelp = this.state.runCommand ? '⇧ + ↲' : '↲'
+    let runHelpMessage = this.state.runCommand
+      ? 'press shift + enter to run'
+      : 'press enter to run'
+    let imgURL = `./logos/${this.state.lang}.png`
+    let [handleCount, handleMsg] = this.getActiveHandle()
     return (
       <div className='repl-status-bar'>
         <span className='repl-status-bar-preference' title='Preferences'>
@@ -93,19 +97,25 @@ export default class ReplStatusBar extends React.Component {
           this.state.lang === 'js'
             ? <span className='repl-status-bar-mode' title='REPL Mode'>
                 <i className="fa fa-tag"></i>
-                <span className='repl-status-bar-message'>{this.state.mode}</span>
+                <span
+                  className='repl-status-bar-message'>{this.state.mode}</span>
               </span>
             : null
         }
-        <span className='run-help' title={runHelpMessage}>press <span className='run-command'>{runHelp}</span> to <span className='run'>run</span></span>
-        <span className='repl-status-cursor-position' onClick={this.onDownload} title='Cursor Position'>
+        <span className='run-help' title={runHelpMessage}>press <span
+          className='run-command'>{runHelp}</span> to <span
+          className='run'>run</span></span>
+        <span className='repl-status-cursor-position' onClick={this.onDownload}
+              title='Cursor Position'>
           {this.state.cursor[0]}:{this.state.cursor[1]}
         </span>
         <span className='placeholder'></span>
         {
           this.state.newRelease
-            ? <span className='console-release-notification' onClick={this.onDownload} title='Click to Download'>
-                 <i className="fa fa-download"></i> {this.state.newRelease.release}
+            ? <span className='console-release-notification'
+                    onClick={this.onDownload} title='Click to Download'>
+                 <i
+                   className="fa fa-download"></i> {this.state.newRelease.release}
               </span>
             : null
         }
@@ -114,7 +124,8 @@ export default class ReplStatusBar extends React.Component {
             ? <i className="fa fa-bell console-notification"></i>
             : null
         }
-        <span className='repl-status-bar-console' onClick={this.props.onToggleConsole} title='Toggle Console'>
+        <span className='repl-status-bar-console'
+              onClick={this.props.onToggleConsole} title='Toggle Console'>
           <span className="fa-stack">
             <i className="fa fa-terminal fa-stack-1x"></i>
             {
@@ -126,6 +137,6 @@ export default class ReplStatusBar extends React.Component {
           </span>
         </span>
       </div>
-    );
+    )
   }
 }
