@@ -530,7 +530,7 @@ class Some {
   
   highlight (output) {
     return {
-      formattedOutput: ReplOutput.transformObject(this.value) || this.value,
+      formattedOutput: ReplOutput.transformObject(this.value, false) || this.value,
       error: false
     }
   }
@@ -557,7 +557,7 @@ let ReplOutput = {
         [[Get Error]] {ReplOutputType[typeof e](e)}
       </span>)
   },
-  transformObject: (object, collapse = false) => {
+  transformObject: (object, collapse = true) => {
     try {
       if (object instanceof ClojureWrapper) {
         return object.view()

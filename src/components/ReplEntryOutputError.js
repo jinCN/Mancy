@@ -17,7 +17,7 @@ export default class ReplEntryOutputError extends React.Component {
     }
     
     let error = props.error
-    console.log(`error:`, error)
+
     this.onToggleCollapse = this.onToggleCollapse.bind(this)
     this.bindObjectToContext = this.bindObjectToContext.bind(this)
     
@@ -66,7 +66,7 @@ export default class ReplEntryOutputError extends React.Component {
   
   highlightMessage (message) {
     let output
-    message.replace(/^([^:]+):(.*)$/, (match, p1, p2) => {
+    message.replace(/^([^:]+):([\s\S]*)$/, (match, p1, p2) => {
       if (p1 && p2) {
         output =
           <span className='repl-entry-output-error-message-heading'>
@@ -135,7 +135,7 @@ export default class ReplEntryOutputError extends React.Component {
       )
       return ''
     }
-    
+    let isStart = true
     _.each(lines, (s, i) => {
       if (i === 0) {
         messageLines.push(s)
@@ -145,9 +145,10 @@ export default class ReplEntryOutputError extends React.Component {
         ? STACK_TRACE_PRIMARY_PATTERN
         : STACK_TRACE_SECONDARY_PATTERN
       if (!pattern.test(s)) {
-        messageLines.push(s)
+        if (isStart) messageLines.push(s)
         return
       }
+      isStart = false
       s.replace(pattern, filler)
     })
     

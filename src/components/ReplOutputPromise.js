@@ -86,18 +86,19 @@ export default class ReplOutputPromise extends React.Component {
                   }
                 </div>
               }
-                {
-                  this.state.status !== ReplConstants.PROMISE.PENDING &&
-                  <div className='object-entry' key='promise-value'>
+                <div className='object-entry' key='promise-value'>
                     {
                       <span className='promise-value'>
                       [[PromiseValue]]
                       <span className='object-colon'>: </span>
                     </span>
                     }
-                    {ReplOutput.transformObject(this.state.value)}
-                  </div>
-                }
+                  {
+                    this.state.status !== ReplConstants.PROMISE.PENDING
+                      ? ReplOutput.transformObject(this.state.value)
+                      : ''
+                  }
+                </div>
                 {
                   this.props.promise.__proto__
                     ? <div className='object-entry' key='prototype'>

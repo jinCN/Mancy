@@ -8,7 +8,7 @@ import ReplContext from '../common/ReplContext'
 import ReplOutput from '../common/ReplOutput'
 import lazy from '@superjs/lazy'
 let lazyLocal = lazy({
-  clojure:()=> require('../node_modules/cljs-mancy/mancy/clojurescript')
+  clojure:()=> require('cljs-mancy/mancy/clojurescript')
 })
 
 let nodeLineListener = () => {}
