@@ -52,6 +52,7 @@ const resources = [
 ].concat(nodeResources).concat(excludes)
 
 const resourcesInternal = [
+  'bin/**/*',
   'fonts/**/*',
   'stylesheets/*',
   'menus/**/*',

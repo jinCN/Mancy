@@ -23,7 +23,7 @@ const Menu = remote.Menu
 const parinfer = require('parinfer')
 
 // modes
-const modes = ['javascript', 'coffeescript', 'livescript', 'clojure']
+const modes = ['javascript', 'coffeescript', 'livescript', 'clojure','go']
 modes.forEach(mode => require(`../node_modules/codemirror/mode/${mode}/${mode}.js`))
 
 // keymaps
@@ -80,6 +80,10 @@ export default class ReplActiveInput extends React.Component {
     // retry on error for sloppy mode
     this.retried = false
     this.setDebouncedComplete()
+  }
+  
+  get langMode(){
+    return global.Mancy.session.lang === 'golang' ? 'golang' : 'js'
   }
   
   componentDidMount () {
@@ -379,7 +383,11 @@ export default class ReplActiveInput extends React.Component {
         plainCode: text
       })
     }
-    
+    if(this.langMode === 'golang'){
+      console.log(`cli.$lastExpression.getValue():`, cli.$lastExpression.getValue())
+      addEntryAction(cli.$lastExpression.getValue(),undefined,this.promptInput)
+      return
+    }
     if (cli.bufferedCommand.indexOf(this.replFeed) != -1 &&
       global.Mancy.REPLError) {
       let { formattedOutput } = cli.$lastExpression.highlight(global.Mancy.REPLError.stack)
@@ -421,26 +429,28 @@ export default class ReplActiveInput extends React.Component {
   }
   
   autoComplete (__, completion, kinds) {
+    let suggestions=[]
     let completeEntry = (suggestions, text) => {
       return suggestions.length != 1 || !text.endsWith(suggestions[0].text)
     }
-    let [list, completeOn] = completion
-    list = list.concat(this.fixAutoComplete(completeOn))
-    let suggestions = _.chain(_.zip(ReplCommon.sortTabCompletion(ReplLanguages.getREPL().context, list, completeOn), kinds))
-      .filter((zipped) => {
-        return zipped[0] && zipped[0].length !== 0
-      })
-      .map((zipped) => {
-        return {
-          type: ReplType.typeOf(zipped[1] ? zipped[1] : zipped[0]),
-          text: zipped[0].replace(/^.*\./, ''),
-          completeOn: completeOn.replace(/^.*\./, '')
-        }
-      })
-      .value()
-    
+    if (this.langMode === 'golang') {}else {
+      let [list, completeOn] = completion
+      list = list.concat(this.fixAutoComplete(completeOn))
+      let suggestions = _.chain(_.zip(ReplCommon.sortTabCompletion(ReplLanguages.getREPL().context, list, completeOn), kinds))
+        .filter((zipped) => {
+          return zipped[0] && zipped[0].length !== 0
+        })
+        .map((zipped) => {
+          return {
+            type: ReplType.typeOf(zipped[1] ? zipped[1] : zipped[0]),
+            text: zipped[0].replace(/^.*\./, ''),
+            completeOn: completeOn.replace(/^.*\./, '')
+          }
+        })
+        .value()
+    }
     const cm = this.editor
-    const text = cm.getValue()
+//    const text = cm.getValue()
     const { line, ch } = cm.getCursor()
     const code = cm.doc.getRange({ line: 0, ch: 0 }, { line, ch })
     
@@ -828,24 +838,28 @@ export default class ReplActiveInput extends React.Component {
       return
     }
     ReplSuggestionActions.removeSuggestion()
-    
-    // node repl patch
-    let cli = ReplLanguages.getREPL()
-    cli.bufferedCommand = ''
-    cli.lines = _.clone(this.lines)
-    cli.lines.level = _.clone(this.levels)
-    try {
-      // dont leak auto complete errors
-      if (line > 0) {
-        cli.bufferedCommand = cm.doc.getRange({ line: 0, ch: 0 }, {
-          line: line - 1
-        })
-        cli.bufferedCommand.split('\n').forEach(l => cli.memory(l))
+  
+    callback(null,[[], beforeCursor])
+    if (this.langMode === 'golang') {}else {
+  
+      // node repl patch
+      let cli = ReplLanguages.getREPL()
+      cli.bufferedCommand = ''
+      cli.lines = _.clone(this.lines)
+      cli.lines.level = _.clone(this.levels)
+      try {
+        // dont leak auto complete errors
+        if (line > 0) {
+          cli.bufferedCommand = cm.doc.getRange({ line: 0, ch: 0 }, {
+            line: line - 1
+          })
+          cli.bufferedCommand.split('\n').forEach(l => cli.memory(l))
+        }
+        cli.complete(beforeCursor, callback)
+      } catch (e) {
+        // ignore
+        // console.log('on autoComplete', e)
       }
-      cli.complete(beforeCursor, callback)
-    } catch (e) {
-      // ignore
-      // console.log('on autoComplete', e)
     }
   }
   

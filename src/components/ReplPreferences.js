@@ -12,7 +12,8 @@ let langs = {
   ls: 'LiveScript',
   ts: 'TypeScript',
   coffee: 'CoffeeScript',
-  cljs: 'ClojureScript'
+  cljs: 'ClojureScript',
+  golang: 'GoLang'
 }
 
 export default class ReplPreferences extends React.Component {

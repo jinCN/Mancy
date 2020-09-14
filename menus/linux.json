@@ -105,7 +105,12 @@
           { "label" : "CoffeeScript", "value": "coffee", "type": "radio", "command": "application:prompt-language" },
           { "label" : "TypeScript", "value": "ts", "type": "radio", "command": "application:prompt-language" },
           { "label" : "LiveScript", "value": "ls", "type": "radio", "command": "application:prompt-language" },
-          { "label" : "ClojureScript", "value": "cljs", "type": "radio", "command": "application:prompt-language" }
+          { "label" : "ClojureScript", "value": "cljs", "type": "radio", "command": "application:prompt-language" }, {
+            "label": "GoLang",
+            "value": "golang",
+            "type": "radio",
+            "command": "application:prompt-language"
+          }
         ]
       }
     ]

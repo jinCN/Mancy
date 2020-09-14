@@ -24,6 +24,7 @@ import ReplConstants from '../constants/ReplConstants'
 import ReplContext from '../common/ReplContext'
 import ReplCommon from '../common/ReplCommon'
 import ReplLanguages from '../languages/ReplLanguages'
+import ReplGoLang from '../languages/ReplGoLang'
 import { format } from 'util'
 
 export default class Repl extends React.Component {
@@ -34,7 +35,7 @@ export default class Repl extends React.Component {
       'onKeydown', 'onBreakPrompt', 'onClearCommands',
       'onCollapseAll', 'onExpandAll', 'onDrag', 'onToggleConsole',
       'onFormatPromptCode',
-      'onStdout', 'onStderr', 'onStdMessage', 'onConsole', 'onConsoleChange',
+      'onStdout', 'onStderr', 'onStdMessage', 'onRawStdMessage', 'onConsole', 'onConsoleChange',
       'getPromptKey',
       'onImport', 'onExport', 'onAddPath', 'loadPreferences', 'onSaveCommands',
       'onLoadScript', 'setTheme',
@@ -80,6 +81,8 @@ export default class Repl extends React.Component {
     ReplStreamHook.on('stderr', this.onStderr)
     
     ReplConsoleHook.on('console', this.onConsole)
+  
+    ReplGoLang.getREPL().on('output',this.onRawStdMessage)
     
     ipcRenderer.on('application:import-file', this.onImport)
     ipcRenderer.on('application:export-file', this.onExport)
@@ -447,6 +450,15 @@ export default class Repl extends React.Component {
   
   onStdMessage (data, type) {
     let { formattedOutput } = ReplOutput.some(data).highlight(data)
+    ReplConsoleActions.addEntry({
+      type: type,
+      data: [formattedOutput]
+    })
+    this.onConsoleChange()
+  }
+  
+  onRawStdMessage (data, type) {
+    let formattedOutput = <span className='cm-number'>{data}</span>
     ReplConsoleActions.addEntry({
       type: type,
       data: [formattedOutput]

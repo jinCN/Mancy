@@ -44,11 +44,10 @@ export default class ReplConsole extends React.Component {
   
   onFilter (type) {
     let flag = !this.state[type]
+    this.setState(this.state)
     let newState = _.extend({}, this.state)
     newState[type] = flag
-    newState.entries = _.filter(ReplConsoleStore.getStore().entries, (entry) => {
-      return newState[entry.type]
-    })
+    
     this.setState(newState)
   }
   
@@ -128,7 +127,7 @@ export default class ReplConsole extends React.Component {
           onDebug={this.onDebug}/>
         <div className='repl-console-message-list'>
           {
-            _.map(this.state.entries, ({ type, data, time, count }) => {
+            _.map(this.state.entries.filter(v=>this.state[v.type]), ({ type, data, time, count }) => {
               return (
                 <div
                   className={this.getTypedClassName('repl-console-message-entry', type)}

@@ -114,6 +114,7 @@ function onFocusWindow (e) {
 }
 
 const uncaughtExceptionHandler = (err, title = 'Application Error', type = 'error') => {
+  console.log(`err:`, err)
   const window = BrowserWindow.getFocusedWindow()
   if (window || BrowserWindow.getAllWindows().length) {
     let action = dialog.showMessageBoxSync(window, {
@@ -486,3 +487,12 @@ function onReady (fun) {
 }
 
 initHistory()
+//
+//import installExtension, { REACT_DEVELOPER_TOOLS } from 'electron-devtools-installer';
+//const sleep=ms=>new Promise((resolve,reject)=>setTimeout(resolve,ms))
+//electron.app.whenReady().then(async () => {
+//  await sleep(3000)
+//  installExtension(REACT_DEVELOPER_TOOLS)
+//    .then((name) => console.log(`Added Extension:  ${name}`))
+//    .catch((err) => console.log('An error occurred: ', err));
+//});
